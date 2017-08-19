@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Ripple</string>
+    <string name="target_label">Recipient:</string>
+    <string name="status_label_waiting">Waiting for library to initialize…</string>
+    <string name="red">RED</string>
+    <string name="green">GREEN</string>
+    <string name="blue">BLUE</string>
+    <plurals name="number_of_connected_devices">
+        <item quantity="one">1 device connected.</item>
+        <item quantity="other">%d devices connected.</item>
+    </plurals>
+</resources>
