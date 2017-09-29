@@ -6,7 +6,7 @@ Ripple is a simple Android application that illustrates how network packets in a
 
 The user can also choose a colour and then tap the "send to all" button, which as the name implies will send the selected colour to all other devices on the mesh. This option really shows off the "ripple" effect as the messages travel outwards!
 
-The app can be seen in use here: https://www.instagram.com/p/BXp5Nj9hHcm/
+The app can be seen in use here: https://www.youtube.com/watch?v=tSRjoU_9A9g 
 
 To access the RightMesh settings page, just long-press the send button.
 
