@@ -10,7 +10,7 @@ repositories {
 
     // For the RightMesh library.
     maven {
-        url "http://research.rightmesh.io/artifactory/libs-release-local"
+        url "https://research.rightmesh.io/artifactory/libs-release-local"
         credentials {
             username artifactory_app_username
             password artifactory_app_password
@@ -27,7 +27,7 @@ buildscript {
     repositories {
         // For the RightMesh Gradle Plugin
         maven {
-            url "http://research.rightmesh.io/artifactory/libs-local"
+            url "https://research.rightmesh.io/artifactory/libs-local"
             credentials {
                 username artifactory_app_username
                 password artifactory_app_password
