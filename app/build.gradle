@@ -49,7 +49,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "io.left.ripple"
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
