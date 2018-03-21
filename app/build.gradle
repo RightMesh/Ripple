@@ -10,7 +10,7 @@ repositories {
 
     // For the RightMesh library.
     maven {
-        url "http://research.rightmesh.io/artifactory/libs-local"
+        url "https://research.rightmesh.io/artifactory/libs-release-local"
         credentials {
             username artifactory_app_username
             password artifactory_app_password
@@ -27,7 +27,7 @@ buildscript {
     repositories {
         // For the RightMesh Gradle Plugin
         maven {
-            url "http://research.rightmesh.io/artifactory/libs-local"
+            url "https://research.rightmesh.io/artifactory/libs-release-local"
             credentials {
                 username artifactory_app_username
                 password artifactory_app_password
@@ -38,7 +38,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'io.left.rightmesh:rightmesh-plugin:1.3'
+        classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
     }
 }
 apply plugin: 'io.left.rightmesh.rightmesh-plugin'
@@ -49,7 +49,7 @@ android {
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "io.left.ripple"
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -72,12 +72,12 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:27.0.0'
+    compile 'com.android.support:appcompat-v7:27.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:27.0.0'
+    compile 'com.android.support:design:27.1.0'
 
     compile('io.left.rightmesh:rightmesh-library-dev:0.4.0') {
         transitive true
     }
-    compile 'com.android.support:multidex:1.0.2'
+    compile 'com.android.support:multidex:1.0.3'
 }
