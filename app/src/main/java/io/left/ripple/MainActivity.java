@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         try {
             if (recipient != null) {
                 String payload = recipient.toString() + ":" + messageColour;
-                mm.sendDataReliable(mm.getNextHopPeer(recipient), 1234, payload.getBytes());
+                mm.sendDataReliable(mm.getNextHopPeer(recipient), 9876, payload.getBytes());
             }
         } catch(ServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         if (state == MeshStateListener.SUCCESS) {
             try {
                 // Attempt to bind to a port.
-                MeshManager.Result r = mm.bind(1234);
+                MeshManager.Result r = mm.bind(9876);
                 if (r.result == MeshManager.FAILURE) {
                     component.setStatus("Failed to bind.");
                     return;
