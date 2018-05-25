@@ -3,6 +3,7 @@ package io.left.ripple;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import static io.left.ripple.RightMeshRecipientComponent.shortenMeshID;
  *     background colour of the peers that transmit the message along the way.
  * </p>
  */
-public class MainActivity extends Activity implements MeshStateListener,
+public class MainActivity extends AppCompatActivity implements MeshStateListener,
         RightMeshRecipientComponent.RecipientChangedListener {
     private static final String TAG = MainActivity.class.getCanonicalName();
 
