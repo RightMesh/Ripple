@@ -8,27 +8,27 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import io.left.rightmesh.id.MeshID;
+import io.left.rightmesh.id.MeshId;
 
 /**
  * A custom adapter to style the MeshIDs a little nicer in the list.
  */
-class MeshIDAdapter extends ArrayAdapter<MeshID> {
+class MeshIdAdapter extends ArrayAdapter<MeshId> {
 
     /**
      * Inflates the parent {@link ArrayAdapter} and stores the context for use loading colours.
      *
      * @param context app context, need by parent class
      */
-    MeshIDAdapter(@NonNull Context context) {
+    MeshIdAdapter(@NonNull Context context) {
         super(context, android.R.layout.simple_spinner_dropdown_item);
     }
 
     // ID of the peer to treat as this device (i.e. for styling and naming).
-    private MeshID deviceID;
+    private MeshId deviceId;
 
-    void setDeviceID(MeshID deviceID) {
-        this.deviceID = deviceID;
+    void setDeviceId(MeshId deviceId) {
+        this.deviceId = deviceId;
     }
 
 
@@ -38,7 +38,7 @@ class MeshIDAdapter extends ArrayAdapter<MeshID> {
 
     /**
      * Returns default view with colour/text modified by
-     * {@link MeshIDAdapter#modifyView(TextView, int)}.
+     * {@link MeshIdAdapter#modifyView(TextView, int)}.
      *
      * {@inheritDoc}
      */
@@ -51,7 +51,7 @@ class MeshIDAdapter extends ArrayAdapter<MeshID> {
 
     /**
      * Returns default view with colour/text modified by
-     * {@link MeshIDAdapter#modifyView(TextView, int)}.
+     * {@link MeshIdAdapter#modifyView(TextView, int)}.
      *
      * {@inheritDoc}
      */
@@ -62,7 +62,7 @@ class MeshIDAdapter extends ArrayAdapter<MeshID> {
     }
 
     /**
-     * Update the supplied view with a shortened MeshID string or the special styling for the
+     * Update the supplied view with a shortened MeshId string or the special styling for the
      * current device.
      *
      * @param view view to be modified
@@ -70,17 +70,17 @@ class MeshIDAdapter extends ArrayAdapter<MeshID> {
      * @return the modified view
      */
     private View modifyView(TextView view, int position) {
-        MeshID item = this.getItem(position);
+        MeshId item = this.getItem(position);
         if (item != null) {
             String text; // Text for the item in the list.
             int colour;  // Colour for the text in the list.
 
-            if (deviceID != null && item.equals(deviceID)) {
+            if (deviceId != null && item.equals(deviceId)) {
                 // Change text colour if is the current device's ID.
                 text = "This Device";
                 colour = R.color.blue;
             } else {
-                // Otherwise, simply make the MeshID more readable and use the theme default colour.
+                // Otherwise, simply make the MeshId more readable and use the theme default colour.
                 text = RightMeshRecipientComponent.shortenMeshID(item);
                 colour = android.R.color.primary_text_light;
             }
@@ -102,7 +102,7 @@ class MeshIDAdapter extends ArrayAdapter<MeshID> {
      * @param item to check the existence of
      * @return true if the provided item is in the array, false otherwise
      */
-    boolean contains(MeshID item) {
+    boolean contains(MeshId item) {
         return getPosition(item) >= 0; // The position is -1 if it doesn't exist.
     }
 }

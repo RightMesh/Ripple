@@ -1,13 +1,15 @@
 package io.left.ripple;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import io.left.rightmesh.android.AndroidMeshManager;
-import io.left.rightmesh.id.MeshID;
+import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshManager.DataReceivedEvent;
 import io.left.rightmesh.mesh.MeshManager.RightMeshEvent;
@@ -33,22 +35,22 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     private static final String TAG = MainActivity.class.getCanonicalName();
 
     // Interface object for the RightMesh library.
-    AndroidMeshManager mm;
+    AndroidMeshManager androidMeshManager;
 
     // Current background colour.
     String colour = "RED";
 
-    // MeshID of the peer to send to when the send button is pressed.
-    MeshID target = null;
+    // MeshId of the peer to send to when the send button is pressed.
+    MeshId targetId = null;
 
-    // Stores the MeshID of this device so that it doesn't need to be retrieved with a service call.
-    MeshID deviceID = null;
+    // Stores the MeshId of this device so that it doesn't need to be retrieved with a service call.
+    MeshId deviceId = null;
 
     // Responsible for allowing the user to select the ping recipient.
     RightMeshRecipientComponent component = null;
 
     // Adapter for tracking views and the spinner it feeds, both mostly powered by `component`.
-    MeshIDAdapter peersListAdapter = null;
+    MeshIdAdapter peersListAdapter = null;
 
     //
     // ANDROID LIFECYCLE MANAGEMENT
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         setContentView(R.layout.activity_main);
 
         View buttonSend = findViewById(R.id.button_send);
-        buttonSend.setOnClickListener(v -> sendMessage(target, colour));
+        buttonSend.setOnClickListener(v -> sendMessage(targetId, colour));
 
         View buttonSendAll = findViewById(R.id.button_sendAll);
         buttonSendAll.setOnClickListener(v -> sendAll());
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         buttonSend.setLongClickable(true);
         buttonSend.setOnLongClickListener(v -> {
             try {
-                mm.showSettingsActivity();
+                androidMeshManager.showSettingsActivity();
             } catch (RightMeshException ignored) { /* Meh. */ }
             return true;
         });
@@ -84,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         findViewById(R.id.button_blue).setOnClickListener(v -> setColour("BLUE"));
 
         // Set up the recipient selection spinner.
-        peersListAdapter = new MeshIDAdapter(this);
+        peersListAdapter = new MeshIdAdapter(this);
         component = (RightMeshRecipientComponent) getFragmentManager()
                 .findFragmentById(R.id.recipient_component);
         component.setSpinnerAdapter(peersListAdapter);
         component.setOnRecipientChangedListener(this);
 
         // Initialize the RightMesh library with the SSID pattern "Ripple".
-        mm = AndroidMeshManager.getInstance(MainActivity.this, MainActivity.this, "Ripple");
+        androidMeshManager = AndroidMeshManager.getInstance(MainActivity.this, MainActivity.this);
     }
 
     /**
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     protected void onResume() {
         super.onResume();
         try {
-            mm.resume();
+            androidMeshManager.resume();
         } catch (ServiceDisconnectedException e) {
             Log.e(TAG, "Service disconnected before resuming AndroidMeshManager with message"
                     + e.getMessage());
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     protected void onDestroy() {
         super.onDestroy();
         try {
-            mm.stop();
+            androidMeshManager.stop();
         } catch (ServiceDisconnectedException e) {
             Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
                     + e.getMessage());
@@ -134,11 +136,11 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
      * @param recipient final intended recipient of the message
      * @param messageColour to send
      */
-    private void sendMessage(MeshID recipient, String messageColour) {
+    private void sendMessage(MeshId recipient, String messageColour) {
         try {
             if (recipient != null) {
                 String payload = recipient.toString() + ":" + messageColour;
-                mm.sendDataReliable(mm.getNextHopPeer(recipient), 1234, payload.getBytes());
+                androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(recipient), 9001, payload.getBytes());
             }
         } catch(ServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
@@ -149,11 +151,11 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     }
 
     /**
-     * Sends a message (using {@link MainActivity#sendMessage(MeshID, String)}) to all peers.
+     * Sends a message (using {@link MainActivity#sendMessage(MeshId, String)}) to all peers.
      */
     private void sendAll() {
         for (int i = 0; i < peersListAdapter.getCount(); i++) {
-            MeshID peer = peersListAdapter.getItem(i);
+            MeshId peer = peersListAdapter.getItem(i);
             sendMessage(peer, colour);
         }
     }
@@ -169,8 +171,10 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         // Change colour if the code is valid.
         if (colourCode != -1) {
             this.colour = colour;
-            runOnUiThread(() -> MainActivity.this.findViewById(R.id.layout_background)
-                    .setBackgroundColor(ContextCompat.getColor(this, colourCode)));
+            runOnUiThread(() -> {
+                MainActivity.this.findViewById(R.id.layout_background)
+                        .setBackgroundColor(ContextCompat.getColor(this, colourCode));
+            });
         }
     }
 
@@ -186,27 +190,27 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
      * @param state new state of the RightMesh library
      */
     @Override
-    public void meshStateChanged(MeshID meshID, int state) {
-        deviceID = meshID;
+    public void meshStateChanged(MeshId meshID, int state) {
+        deviceId = meshID;
         if (state == MeshStateListener.SUCCESS) {
             try {
                 // Attempt to bind to a port.
-                MeshManager.Result r = mm.bind(1234);
+                MeshManager.Result r = androidMeshManager.bind(9001);
                 if (r.result == MeshManager.FAILURE) {
                     component.setStatus("Failed to bind.");
-                    return;
+                   // return;
                 } else {
-                    component.setStatus("This device's ID is " + shortenMeshID(deviceID));
+                    component.setStatus("This device's ID is " + shortenMeshID(deviceId));
                 }
 
                 // Update the peers list.
-                peersListAdapter.add(deviceID);
-                peersListAdapter.setDeviceID(deviceID);
+                peersListAdapter.add(deviceId);
+                peersListAdapter.setDeviceId(deviceId);
                 runOnUiThread(() -> peersListAdapter.notifyDataSetChanged());
 
                 // Bind RightMesh event handlers.
-                mm.on(DATA_RECEIVED, MainActivity.this::receiveColourMessage);
-                mm.on(PEER_CHANGED, e -> runOnUiThread(() -> component.updatePeersList(e)));
+                androidMeshManager.on(DATA_RECEIVED, MainActivity.this::receiveColourMessage);
+                androidMeshManager.on(PEER_CHANGED, e -> runOnUiThread(() -> component.updatePeersList(e)));
             } catch (ServiceDisconnectedException sde) {
                 Log.e(TAG, "Service disconnected while binding, with message: "
                         + sde.getMessage());
@@ -229,12 +233,12 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
 
         // Transmit the message forward if this device is not the intended final recipient.
         try {
-            MeshID recipient = new MeshID(dataString.substring(0, separatorIndex));
-            if (!recipient.equals(deviceID)) {
+            MeshId recipient = new MeshId(dataString.substring(0, separatorIndex));
+            if (!recipient.equals(deviceId)) {
                 sendMessage(recipient, dataString.substring(separatorIndex+1));
             }
         } catch (RightMeshException rmex) {
-            Log.e(TAG, "Failed to parse MeshID from string, with message: " + rmex.getMessage());
+            Log.e(TAG, "Failed to parse MeshId from string, with message: " + rmex.getMessage());
         }
 
         // Change the colour of this phone to illustrate the path of the data.
@@ -242,13 +246,13 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     }
 
     /**
-     * Update the message target when the user selects a new recipient.
+     * Update the message targetId when the user selects a new recipient.
      *
-     * @param recipient new target
+     * @param recipient new targetId
      */
     @Override
-    public void onChange(MeshID recipient) {
-        target = recipient;
+    public void onChange(MeshId recipient) {
+        targetId = recipient;
     }
 
 
