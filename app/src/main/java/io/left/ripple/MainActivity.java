@@ -16,6 +16,9 @@ import io.left.rightmesh.util.RightMeshException.RightMeshServiceDisconnectedExc
 
 import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
 import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
+import static io.left.ripple.Colour.BLUE;
+import static io.left.ripple.Colour.GREEN;
+import static io.left.ripple.Colour.RED;
 
 /**
  * A simple activity to demonstrate the movement of data through a RightMesh mesh network.
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     private static final int MESH_PORT = 9001;
 
     // Current background colour.
-    String colour = "RED";
+    Colour colour = RED;
 
     // MeshId of the peer to send to when the send button is pressed.
     MeshId targetId = null;
@@ -79,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         });
 
         // Change the background colour when the respective colour buttons are pressed.
-        findViewById(R.id.button_red).setOnClickListener(v -> setColour("RED"));
-        findViewById(R.id.button_green).setOnClickListener(v -> setColour("GREEN"));
-        findViewById(R.id.button_blue).setOnClickListener(v -> setColour("BLUE"));
+        findViewById(R.id.button_red).setOnClickListener(v -> setColour(RED));
+        findViewById(R.id.button_green).setOnClickListener(v -> setColour(GREEN));
+        findViewById(R.id.button_blue).setOnClickListener(v -> setColour(BLUE));
 
         // Set up the recipient selection spinner.
         peersListAdapter = new MeshIdAdapter(this);
@@ -122,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         }
     }
 
-
     //
     // ANDROID UI EVENT HANDLERS
     //
@@ -134,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
      * @param recipient final intended recipient of the message
      * @param messageColour to send
      */
-    private void sendMessage(MeshId recipient, String messageColour) {
+    private void sendMessage(MeshId recipient, Colour messageColour) {
         try {
             if (recipient != null) {
-                String payload = recipient.toString() + ":" + messageColour;
+                String payload = recipient.toString() + ":" + messageColour.toString();
                 androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(recipient), MESH_PORT, payload.getBytes());
             }
         } catch(RightMeshServiceDisconnectedException sde) {
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     }
 
     /**
-     * Sends a message (using {@link MainActivity#sendMessage(MeshId, String)}) to all peers.
+     * Sends a message (using {@link MainActivity#sendMessage(MeshId, Colour)}) to all peers.
      */
     private void sendAll() {
         for (int currentPeerIndex = 0;
@@ -165,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
      *
      * @param colour colour to change to
      */
-    private void setColour(String colour) {
-        final int colourCode = getColourID(colour);
+    private void setColour(Colour colour) {
+        final int colourCode = colour.getColourId();
 
         // Change colour if the code is valid.
         if (colourCode != -1) {
@@ -177,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
             });
         }
     }
-
 
     //
     // RIGHTMESH EVENT HANDLERS
@@ -228,11 +229,11 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         // Transmit the message forward if this device is not the intended final recipient.
         MeshId recipient = new MeshId(dataString.substring(0, separatorIndex).getBytes());
         if (!recipient.equals(deviceId)) {
-            sendMessage(recipient, dataString.substring(separatorIndex + 1));
+            sendMessage(recipient, Colour.valueOf(dataString.substring(separatorIndex + 1).toString()));
         }
 
         // Change the colour of this phone to illustrate the path of the data.
-        setColour(dataString.substring(separatorIndex+1));
+        setColour(Colour.valueOf(dataString.substring(separatorIndex + 1).toString()));
     }
 
     /**
@@ -243,25 +244,5 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     @Override
     public void onChange(MeshId recipient) {
         targetId = recipient;
-    }
-
-
-    //
-    // HELPER METHODS
-    //
-
-    /**
-     * Returns the Android resource ID for a colour from its String representation.
-     *
-     * @param colour either RED, GREEN, or BLUE
-     * @return Android resource ID for the desired colour, or -1 if invalid
-     */
-    private int getColourID(String colour) {
-        switch (colour.toUpperCase()) {
-            case "RED": return R.color.red;
-            case "GREEN": return R.color.green;
-            case "BLUE": return R.color.blue;
-            default: return -1;
-        }
     }
 }
