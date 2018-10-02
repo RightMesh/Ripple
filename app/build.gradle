@@ -1,41 +1,34 @@
 apply plugin: 'com.android.application'
+// NOTE: you MUST disable configureOnDemand for your compiler.
+// To do this in Android Studio: https://stackoverflow.com/a/49994951/4082582
 
-configurations.all {
-    setTransitive(true)
-}
+buildscript {
+    ext {
+        // define these variables in your personal ~/.gradle/gradle.properties
+        // for example:
 
 repositories {
     // For multidex
     google()
 
-    // For the RightMesh library.
-    maven {
-        url "https://research.rightmesh.io/artifactory/libs-local"
-        credentials {
-            username artifactory_app_username
-            password artifactory_app_password
-        }
-    }
-}
+        artifactory_app_username = "${rightmesh_artifactory_username}"
+        artifactory_app_password = "${rightmesh_artifactory_password}"
+        artifactory_app_key = "${rightmesh_hellomesh_key}"
 
-buildscript {
-    ext {
-        artifactory_app_username = "insertyourusername"
-        artifactory_app_password = "insertyourpasswordhash"
-        artifactory_app_key = "insertyourkey"
+        rightmesh_maven_repo="https://research.rightmesh.io/artifactory/libs-local"
+        maven_repo = "${rightmesh_maven_repo}"
     }
     repositories {
-        // For the RightMesh Gradle Plugin
         maven {
-            url "https://research.rightmesh.io/artifactory/libs-local"
+            url maven_repo
             credentials {
                 username artifactory_app_username
                 password artifactory_app_password
             }
         }
-
-        // For dependencies of the RightMesh Gradle Plugin
+        google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
@@ -44,25 +37,40 @@ buildscript {
 apply plugin: 'io.left.rightmesh.rightmesh-plugin'
 preBuild.dependsOn("rightmesh")
 
+
+repositories {
+    mavenCentral()
+    jcenter()
+    google()
+    maven {
+        url maven_repo
+        credentials {
+            username artifactory_app_username
+            password artifactory_app_password
+        }
+    }
+}
+
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '28.0.2'
     defaultConfig {
-        applicationId "io.left.ripple"
+        applicationId "io.left.hellomesh"
         minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-
-        // Needed to allow for a large number of methods.
         multiDexEnabled true
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
     buildTypes {
         release {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-     // Allows the use of lambda and method reference syntax.
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
@@ -70,12 +78,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:design:27.1.0'
-
-    implementation'io.left.rightmesh:rightmesh-library-dev:0.5.0'
-
     implementation 'com.android.support:multidex:1.0.3'
+    implementation ('io.left.rightmesh:rightmesh-library:0.8.0')
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
