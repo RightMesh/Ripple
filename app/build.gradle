@@ -7,31 +7,38 @@ buildscript {
         // define these variables in your personal ~/.gradle/gradle.properties
         // for example:
 
-repositories {
-    // For multidex
-    google()
+        /*
+        rightmesh_artifactory_username=""
+        rightmesh_artifactory_password=""
+        rightmesh_hellomesh_key=""
+        */
 
-        artifactory_app_username = "${rightmesh_artifactory_username}"
-        artifactory_app_password = "${rightmesh_artifactory_password}"
-        artifactory_app_key = "${rightmesh_hellomesh_key}"
+        repositories {
+            // For multidex
+            google()
 
-        rightmesh_maven_repo="https://research.rightmesh.io/artifactory/libs-local"
-        maven_repo = "${rightmesh_maven_repo}"
-    }
-    repositories {
-        maven {
-            url maven_repo
-            credentials {
-                username artifactory_app_username
-                password artifactory_app_password
-            }
+            artifactory_app_username = "${rightmesh_artifactory_username}"
+            artifactory_app_password = "${rightmesh_artifactory_password}"
+            artifactory_app_key = "${rightmesh_hellomesh_key}"
+
+            rightmesh_maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
+            maven_repo = "${rightmesh_maven_repo}"
         }
-        google()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
+        repositories {
+            maven {
+                url maven_repo
+                credentials {
+                    username artifactory_app_username
+                    password artifactory_app_password
+                }
+            }
+            google()
+            mavenCentral()
+            jcenter()
+        }
+        dependencies {
+            classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
+        }
     }
 }
 apply plugin: 'io.left.rightmesh.rightmesh-plugin'
