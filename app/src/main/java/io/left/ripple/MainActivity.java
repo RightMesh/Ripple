@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     @Override
     public void meshStateChanged(MeshId meshID, int state) {
         deviceId = meshID;
-        if (state == MeshStateListener.SUCCESS) {
+        if (state == SUCCESS) {
             try {
                 // Attempt to bind to a port.
                 androidMeshManager.bind(MESH_PORT);
