@@ -156,8 +156,10 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
      * Sends a message (using {@link MainActivity#sendMessage(MeshId, String)}) to all peers.
      */
     private void sendAll() {
-        for (int i = 0; i < peersListAdapter.getCount(); i++) {
-            MeshId peer = peersListAdapter.getItem(i);
+        for (int currentPeerIndex = 0;
+             currentPeerIndex < peersListAdapter.getCount();
+             currentPeerIndex++) {
+            MeshId peer = peersListAdapter.getItem(currentPeerIndex);
             sendMessage(peer, colour);
         }
     }
