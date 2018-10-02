@@ -1,16 +1,13 @@
 package io.left.ripple;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import io.left.rightmesh.android.AndroidMeshManager;
 import io.left.rightmesh.id.MeshId;
-import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshManager.DataReceivedEvent;
 import io.left.rightmesh.mesh.MeshManager.RightMeshEvent;
 import io.left.rightmesh.mesh.MeshStateListener;
@@ -19,7 +16,6 @@ import io.left.rightmesh.util.RightMeshException.RightMeshServiceDisconnectedExc
 
 import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
 import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
-import static io.left.ripple.RightMeshRecipientComponent.shortenMeshID;
 
 /**
  * A simple activity to demonstrate the movement of data through a RightMesh mesh network.
