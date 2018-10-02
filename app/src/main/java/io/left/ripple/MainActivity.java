@@ -15,8 +15,8 @@ import io.left.rightmesh.mesh.MeshManager.DataReceivedEvent;
 import io.left.rightmesh.mesh.MeshManager.RightMeshEvent;
 import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
+import io.left.rightmesh.util.RightMeshException.RightMeshServiceDisconnectedException;
 
-import static io.left.rightmesh.android.MeshService.ServiceDisconnectedException;
 import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
 import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
 import static io.left.ripple.RightMeshRecipientComponent.shortenMeshID;
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
 
     // Interface object for the RightMesh library.
     AndroidMeshManager androidMeshManager;
+
+    private static final int MESH_PORT = 9001;
 
     // Current background colour.
     String colour = "RED";
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         super.onResume();
         try {
             androidMeshManager.resume();
-        } catch (ServiceDisconnectedException e) {
+        } catch (RightMeshServiceDisconnectedException e) {
             Log.e(TAG, "Service disconnected before resuming AndroidMeshManager with message"
                     + e.getMessage());
         }
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         super.onDestroy();
         try {
             androidMeshManager.stop();
-        } catch (ServiceDisconnectedException e) {
+        } catch (RightMeshServiceDisconnectedException e) {
             Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
                     + e.getMessage());
         }
@@ -140,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         try {
             if (recipient != null) {
                 String payload = recipient.toString() + ":" + messageColour;
-                androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(recipient), 9001, payload.getBytes());
+                androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(recipient), MESH_PORT, payload.getBytes());
             }
-        } catch(ServiceDisconnectedException sde) {
+        } catch(RightMeshServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
                     + sde.getMessage());
         } catch (RightMeshException rme) {
@@ -195,13 +197,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         if (state == MeshStateListener.SUCCESS) {
             try {
                 // Attempt to bind to a port.
-                MeshManager.Result r = androidMeshManager.bind(9001);
-                if (r.result == MeshManager.FAILURE) {
-                    component.setStatus("Failed to bind.");
-                   // return;
-                } else {
-                    component.setStatus("This device's ID is " + shortenMeshID(deviceId));
-                }
+                androidMeshManager.bind(MESH_PORT);
 
                 // Update the peers list.
                 peersListAdapter.add(deviceId);
@@ -211,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
                 // Bind RightMesh event handlers.
                 androidMeshManager.on(DATA_RECEIVED, MainActivity.this::receiveColourMessage);
                 androidMeshManager.on(PEER_CHANGED, e -> runOnUiThread(() -> component.updatePeersList(e)));
-            } catch (ServiceDisconnectedException sde) {
+            } catch (RightMeshServiceDisconnectedException sde) {
                 Log.e(TAG, "Service disconnected while binding, with message: "
                         + sde.getMessage());
             } catch (RightMeshException rme) {
@@ -232,13 +228,9 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         int separatorIndex = dataString.indexOf(':');
 
         // Transmit the message forward if this device is not the intended final recipient.
-        try {
-            MeshId recipient = new MeshId(dataString.substring(0, separatorIndex));
-            if (!recipient.equals(deviceId)) {
-                sendMessage(recipient, dataString.substring(separatorIndex+1));
-            }
-        } catch (RightMeshException rmex) {
-            Log.e(TAG, "Failed to parse MeshId from string, with message: " + rmex.getMessage());
+        MeshId recipient = new MeshId(dataString.substring(0, separatorIndex).getBytes());
+        if (!recipient.equals(deviceId)) {
+            sendMessage(recipient, dataString.substring(separatorIndex + 1));
         }
 
         // Change the colour of this phone to illustrate the path of the data.
