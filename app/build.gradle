@@ -14,15 +14,12 @@ buildscript {
         */
 
         repositories {
-            // For multidex
-            google()
 
             artifactory_app_username = "${rightmesh_artifactory_username}"
             artifactory_app_password = "${rightmesh_artifactory_password}"
-            artifactory_app_key = "${rightmesh_hellomesh_key}"
+            artifactory_app_key = "${rightmesh_ripple_key}"
 
-            rightmesh_maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
-            maven_repo = "${rightmesh_maven_repo}"
+            maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
         }
         repositories {
             maven {
@@ -32,9 +29,7 @@ buildscript {
                     password artifactory_app_password
                 }
             }
-            google()
             mavenCentral()
-            jcenter()
         }
         dependencies {
             classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
@@ -47,8 +42,6 @@ preBuild.dependsOn("rightmesh")
 
 repositories {
     mavenCentral()
-    jcenter()
-    google()
     maven {
         url maven_repo
         credentials {
@@ -62,21 +55,12 @@ android {
     compileSdkVersion 27
     buildToolsVersion '28.0.2'
     defaultConfig {
-        applicationId "io.left.hellomesh"
+        applicationId "io.left.ripple"
         minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-    }
-    dexOptions {
-        javaMaxHeapSize "4g"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
     }
     compileOptions {
         targetCompatibility 1.8
