@@ -4,21 +4,15 @@ apply plugin: 'com.android.application'
 
 buildscript {
     ext {
-        // define these variables in your personal ~/.gradle/gradle.properties
-        // for example:
+        // Assumes the below are defined in ~/.gradle/gradle.properties:
 
         /*
-        rightmesh_artifactory_username=""
-        rightmesh_artifactory_password=""
-        rightmesh_hellomesh_key=""
+            artifactory_app_username="<your-username>"
+            artifactory_app_password="<your-password>"
+            artifactory_app_key="<your-app-key>"
         */
 
         repositories {
-
-            artifactory_app_username = "${rightmesh_artifactory_username}"
-            artifactory_app_password = "${rightmesh_artifactory_password}"
-            artifactory_app_key = "${rightmesh_ripple_key}"
-
             maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
         }
         repositories {
@@ -53,7 +47,7 @@ repositories {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.left.ripple"
         minSdkVersion 14
