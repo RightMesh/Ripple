@@ -227,7 +227,13 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         int separatorIndex = dataString.indexOf(':');
 
         // Transmit the message forward if this device is not the intended final recipient.
-        MeshId recipient = new MeshId(dataString.substring(0, separatorIndex).getBytes());
+        MeshId recipient = null;
+        try {
+            recipient = MeshId.fromString(dataString.substring(0,separatorIndex));
+        } catch (RightMeshException e) {
+            Log.e(TAG,"error creating meshId "+ e.getMessage());
+            e.printStackTrace();
+        }
         if (!recipient.equals(deviceId)) {
             sendMessage(recipient, Colour.valueOf(dataString.substring(separatorIndex + 1).toString()));
         }
