@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         } catch (RightMeshException e) {
             Log.e(TAG,"error creating meshId "+ e.getMessage());
             e.printStackTrace();
+            return;
         }
         if (!recipient.equals(deviceId)) {
             sendMessage(recipient, Colour.valueOf(dataString.substring(separatorIndex + 1).toString()));
