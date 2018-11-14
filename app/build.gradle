@@ -4,22 +4,12 @@ apply plugin: 'com.android.application'
 
 buildscript {
     ext {
-        // define these variables in your personal ~/.gradle/gradle.properties
-        // for example:
-
-        /*
-        rightmesh_artifactory_username=""
-        rightmesh_artifactory_password=""
-        rightmesh_hellomesh_key=""
-        */
-
         repositories {
-
-            artifactory_app_username = "${rightmesh_artifactory_username}"
-            artifactory_app_password = "${rightmesh_artifactory_password}"
+            artifactory_app_username = "${RightMeshUsername}"
+            artifactory_app_password = "${RightMeshPassword}"
             artifactory_app_key = "${rightmesh_ripple_key}"
 
-            maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
+            maven_repo = "https://artifactory.rightmesh.io/artifactory/maven"
         }
         repositories {
             maven {
@@ -45,15 +35,18 @@ repositories {
     maven {
         url maven_repo
         credentials {
-            username artifactory_app_username
-            password artifactory_app_password
+            username RightMeshUsername
+            password RightMeshPassword
         }
+    }
+    maven{
+        url "https://dl.bintray.com/ethereum/maven"
     }
 }
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.left.ripple"
         minSdkVersion 14
@@ -66,11 +59,15 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation ('io.left.rightmesh:rightmesh-library:0.9.0')
+    implementation ('io.left.rightmesh:lib-rightmesh-android:0.10.0')
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
 
