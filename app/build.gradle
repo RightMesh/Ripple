@@ -1,42 +1,30 @@
-apply plugin: 'com.android.application'
 // NOTE: you MUST disable configureOnDemand for your compiler.
 // To do this in Android Studio: https://stackoverflow.com/a/49994951/4082582
 
-buildscript {
-    ext {
-        repositories {
-            artifactory_app_username = "${RightMeshUsername}"
-            artifactory_app_password = "${RightMeshPassword}"
-            artifactory_app_key = "${rightmesh_ripple_key}"
 
-            maven_repo = "https://artifactory.rightmesh.io/artifactory/maven"
-        }
-        repositories {
-            maven {
-                url maven_repo
-                credentials {
-                    username artifactory_app_username
-                    password artifactory_app_password
-                }
-            }
-            mavenCentral()
-        }
-        dependencies {
-            classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
-        }
-    }
+plugins {
+    id 'com.android.application'
+    id 'io.left.rightmesh.rightmesh-plugin' version '1.8.1'
 }
-apply plugin: 'io.left.rightmesh.rightmesh-plugin'
+
+rightmesh {
+    //specified in your global gradle.properties files
+    appKey = rightmesh_ripple_key
+    username = rightmesh_devportal_username
+    password = rightmesh_devportal_password
+
+}
+
 preBuild.dependsOn("rightmesh")
 
 
 repositories {
     mavenCentral()
     maven {
-        url maven_repo
+        url 'https://artifactory.rightmesh.io/artifactory/maven'
         credentials {
-            username RightMeshUsername
-            password RightMeshPassword
+            username rightmesh_devportal_username
+            password rightmesh_devportal_password
         }
     }
     maven{
