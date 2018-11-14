@@ -1,5 +1,8 @@
 package io.left.ripple;
 
+import static io.left.ripple.Colour.BLUE;
+import static io.left.ripple.Colour.TEXT_LIGHT;
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -10,8 +13,6 @@ import android.widget.TextView;
 
 import io.left.rightmesh.id.MeshId;
 
-import static io.left.ripple.Colour.BLUE;
-import static io.left.ripple.Colour.TEXT_LIGHT;
 
 /**
  * A custom adapter to style the MeshIDs a little nicer in the list.
@@ -84,7 +85,7 @@ class MeshIdAdapter extends ArrayAdapter<MeshId> {
                 colour = BLUE.getColourId();
             } else {
                 // Otherwise, simply make the MeshId more readable and use the theme default colour.
-                text = RightMeshRecipientComponent.shortenMeshID(item);
+                text = RightMeshRecipientComponent.shortenMeshId(item);
                 colour = TEXT_LIGHT.getColourId();
             }
             view.setText(text);

@@ -9,13 +9,11 @@ public enum Colour {
     private int colourId;
 
     // getter method
-    public int getColourId()
-    {
+    public int getColourId() {
         return this.colourId;
     }
 
-    Colour(int colourId)
-    {
+    Colour(int colourId) {
         this.colourId = colourId;
     }
 }
