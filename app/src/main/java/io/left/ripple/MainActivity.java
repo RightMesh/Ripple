@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
     // Interface object for the RightMesh library.
     AndroidMeshManager androidMeshManager;
 
+    //update this to your  assigned mesh port
     private static final int MESH_PORT = 9001;
 
     // Current background colour.

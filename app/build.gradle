@@ -10,8 +10,8 @@ plugins {
 rightmesh {
     //specified in your global gradle.properties files
     appKey = rightmesh_ripple_key
-    username = rightmesh_devportal_username
-    password = rightmesh_devportal_password
+    username = rightmesh_build_username
+    password = rightmesh_build_password
 
 }
 
@@ -23,8 +23,8 @@ repositories {
     maven {
         url 'https://artifactory.rightmesh.io/artifactory/maven'
         credentials {
-            username rightmesh_devportal_username
-            password rightmesh_devportal_password
+            username rightmesh_build_username
+            password rightmesh_build_password
         }
     }
     maven{
@@ -33,12 +33,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.left.ripple"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -56,8 +56,8 @@ android {
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation ('io.left.rightmesh:lib-rightmesh-android:0.10.0')
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
