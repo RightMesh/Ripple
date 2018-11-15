@@ -1,12 +1,9 @@
 // NOTE: you MUST disable configureOnDemand for your compiler.
 // To do this in Android Studio: https://stackoverflow.com/a/49994951/4082582
-
-
 plugins {
     id 'com.android.application'
     id 'io.left.rightmesh.rightmesh-plugin' version '1.8.1'
 }
-
 rightmesh {
     //specified in your global gradle.properties files
     appKey = rightmesh_ripple_key
@@ -14,9 +11,7 @@ rightmesh {
     password = rightmesh_build_password
 
 }
-
 preBuild.dependsOn("rightmesh")
-
 
 repositories {
     mavenCentral()
