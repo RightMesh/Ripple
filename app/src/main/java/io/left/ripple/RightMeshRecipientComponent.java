@@ -1,5 +1,8 @@
 package io.left.ripple;
 
+import static io.left.rightmesh.mesh.MeshManager.ADDED;
+import static io.left.rightmesh.mesh.MeshManager.REMOVED;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -16,8 +19,6 @@ import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager.PeerChangedEvent;
 import io.left.rightmesh.mesh.MeshManager.RightMeshEvent;
 
-import static io.left.rightmesh.mesh.MeshManager.ADDED;
-import static io.left.rightmesh.mesh.MeshManager.REMOVED;
 
 /**
  * Fragment that keeps track of connected peers when registered to listen to PEER_CHANGED events,
@@ -165,7 +166,7 @@ public class RightMeshRecipientComponent extends Fragment
             // Toast if the recipient has been disconnected.
             if (peer.equals(recipientId)) {
                 Context context = getActivity().getApplicationContext();
-                if(context!=null) {
+                if (context != null) {
                     Toast.makeText(context,
                             "Recipient has disconnected.", Toast.LENGTH_SHORT).show();
                 }
@@ -177,7 +178,7 @@ public class RightMeshRecipientComponent extends Fragment
         if (parentActivity != null) {
             if (spinnerAdapter.getCount() > 1) {
                 // Get string resource with number of connected devices.
-                int numConnectedDevices = spinnerAdapter.getCount()-1;
+                int numConnectedDevices = spinnerAdapter.getCount() - 1;
                 String newText = getResources().getQuantityString(
                         R.plurals.number_of_connected_devices,
                         numConnectedDevices, numConnectedDevices);
@@ -200,7 +201,7 @@ public class RightMeshRecipientComponent extends Fragment
      * @param id to get string of
      * @return truncated string
      */
-    static String shortenMeshID(MeshId id) {
+    static String shortenMeshId(MeshId id) {
         return id.toString().substring(0, 10) + "...";
     }
 }

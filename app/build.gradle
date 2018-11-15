@@ -1,63 +1,39 @@
-apply plugin: 'com.android.application'
 // NOTE: you MUST disable configureOnDemand for your compiler.
 // To do this in Android Studio: https://stackoverflow.com/a/49994951/4082582
-
-buildscript {
-    ext {
-        // define these variables in your personal ~/.gradle/gradle.properties
-        // for example:
-
-        /*
-        rightmesh_artifactory_username=""
-        rightmesh_artifactory_password=""
-        rightmesh_hellomesh_key=""
-        */
-
-        repositories {
-
-            artifactory_app_username = "${rightmesh_artifactory_username}"
-            artifactory_app_password = "${rightmesh_artifactory_password}"
-            artifactory_app_key = "${rightmesh_ripple_key}"
-
-            maven_repo = "https://research.rightmesh.io/artifactory/libs-local"
-        }
-        repositories {
-            maven {
-                url maven_repo
-                credentials {
-                    username artifactory_app_username
-                    password artifactory_app_password
-                }
-            }
-            mavenCentral()
-        }
-        dependencies {
-            classpath 'io.left.rightmesh:rightmesh-plugin:1.6'
-        }
-    }
+plugins {
+    id 'com.android.application'
+    id 'io.left.rightmesh.rightmesh-plugin' version '1.8.1'
 }
-apply plugin: 'io.left.rightmesh.rightmesh-plugin'
-preBuild.dependsOn("rightmesh")
+rightmesh {
+    //specified in your global gradle.properties files
+    appKey = rightmesh_ripple_key
+    username = rightmesh_build_username
+    password = rightmesh_build_password
 
+}
+preBuild.dependsOn("rightmesh")
 
 repositories {
     mavenCentral()
     maven {
-        url maven_repo
+        url 'https://artifactory.rightmesh.io/artifactory/maven'
         credentials {
-            username artifactory_app_username
-            password artifactory_app_password
+            username rightmesh_build_username
+            password rightmesh_build_password
         }
+    }
+    maven{
+        url "https://dl.bintray.com/ethereum/maven"
     }
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.left.ripple"
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -66,13 +42,17 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    lintOptions {
+        abortOnError false
+    }
+
 }
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
-    implementation ('io.left.rightmesh:rightmesh-library:0.9.0')
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation ('io.left.rightmesh:lib-rightmesh-android:0.10.0')
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
