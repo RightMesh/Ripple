@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context="io.left.ripple.MainActivity">
 
-    <io.left.ripple.CustomViewRightMeshRecipient
+    <io.left.ripple.views.CustomViewRightMeshRecipient
         android:id="@+id/rightmesh_recipient"
         android:name="io.left.ripple.RightMeshRecipientComponent"
         android:layout_width="match_parent"

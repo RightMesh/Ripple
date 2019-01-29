@@ -29,7 +29,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     private static final String TAG = MainViewModel.class.getCanonicalName();
 
     // Interface object for the RightMesh library.
-    AndroidMeshManager androidMeshManager;
+    private AndroidMeshManager androidMeshManager;
 
     // Update this to your assigned mesh port.
     private static final int MESH_PORT = 1001;
@@ -48,7 +48,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         colour.setValue(RED);
     }
 
-    public void init() {
+    void init() {
         // Initialize the RightMesh library with the SSID pattern "Ripple".
         androidMeshManager = AndroidMeshManager.getInstance(getApplication(), this);
     }
@@ -79,13 +79,13 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         }
     }
 
-    public void showSettingsActivity() {
+    void showSettingsActivity() {
         try {
             androidMeshManager.showSettingsActivity();
         } catch (RightMeshException ignored) { /* Meh. */ }
     }
 
-    public void sendColorMsg(MeshId targetMeshId, Colour msgColor){
+    void sendColorMsg(MeshId targetMeshId, Colour msgColor){
         try {
             if (targetMeshId != null) {
                 String payload = targetMeshId.toString() + ":" + msgColor.toString();
@@ -103,7 +103,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     /**
      * Send current selected colour to currentTargetMeshId
      */
-    public void sendColorMsg() {
+    void sendColorMsg() {
         sendColorMsg(currentTargetMeshId,
                 colour.getValue());
     }
@@ -142,7 +142,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
      *
      * @param colour colour to change to
      */
-    public void setColour(Colour colour) {
+    void setColour(Colour colour) {
         this.colour.postValue(colour);
     }
 
@@ -158,7 +158,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         int separatorIndex = dataString.indexOf(':');
 
         // Transmit the message forward if this device is not the intended final recipient.
-        MeshId recipient = null;
+        MeshId recipient;
         try {
             recipient = MeshId.fromString(dataString.substring(0, separatorIndex));
         } catch (RightMeshException e) {
@@ -168,14 +168,14 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         }
         if (!recipient.equals(deviceId.getValue())) {
             sendColorMsg(recipient, Colour.valueOf(
-                    dataString.substring(separatorIndex + 1).toString()));
+                    dataString.substring(separatorIndex + 1)));
         }
 
         // Change the colour of this phone to illustrate the path of the data.
         setColour(Colour.valueOf(dataString.substring(separatorIndex + 1)));
     }
 
-    public void setRecipient(MeshId meshId) {
+    void setRecipient(MeshId meshId) {
         currentTargetMeshId = meshId;
     }
 }

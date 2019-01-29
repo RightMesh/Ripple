@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
 import io.left.rightmesh.id.MeshId;
 import io.left.ripple.helper.MeshHelper;
 
@@ -27,14 +25,14 @@ public class MeshIdAdapter extends ArrayAdapter<MeshId> {
      *
      * @param context app context, need by parent class
      */
-    MeshIdAdapter(@NonNull Context context) {
+    public MeshIdAdapter(@NonNull Context context) {
         super(context, android.R.layout.simple_spinner_dropdown_item);
     }
 
     // ID of the peer to treat as this device (i.e. for styling and naming).
     private MeshId deviceId;
 
-    void setDeviceId(MeshId deviceId) {
+    public void setDeviceId(MeshId deviceId) {
         this.deviceId = deviceId;
     }
 
@@ -102,6 +100,11 @@ public class MeshIdAdapter extends ArrayAdapter<MeshId> {
     // HELPER METHODS
     //
 
+    @Override
+    public int getCount() {
+        return super.getCount();
+    }
+
     /**
      * Mimic {@link java.util.ArrayList#contains(Object)} behaviour to make this class easier to
      * use as a list.
@@ -109,7 +112,7 @@ public class MeshIdAdapter extends ArrayAdapter<MeshId> {
      * @param item to check the existence of
      * @return true if the provided item is in the array, false otherwise
      */
-    boolean contains(MeshId item) {
+    public boolean contains(MeshId item) {
         return getPosition(item) >= 0; // The position is -1 if it doesn't exist.
     }
 }

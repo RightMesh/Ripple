@@ -12,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 import io.left.rightmesh.id.MeshId;
+import io.left.ripple.views.CustomViewRightMeshRecipient;
 
 
 /**
@@ -66,13 +67,11 @@ public class MainActivity extends AppCompatActivity{
 
         // Set up the recipient selection spinner.
         recipientView = findViewById(R.id.rightmesh_recipient);
-        recipientView.setOnRecipientChangedListener(recipient -> {
-            viewModel.setRecipient(recipient);
-        });
+        recipientView.setOnRecipientChangedListener(recipient -> viewModel.setRecipient(recipient));
     }
 
     private void colorButtonClick(View view) {
-        Colour colour = null;
+        Colour colour;
         if(view == btnGreen)
             colour = Colour.GREEN;
         else if(view == btnRed)
@@ -98,15 +97,9 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void observeViewModel() {
-        viewModel.colour.observe(this, colour -> {
-            layoutBackground.setBackgroundColor(ContextCompat.getColor(this, colour.getColourId()));
-        });
-        viewModel.peerChangedEvent.observe(this, peerChangeEvent -> {
-            recipientView.updatePeersList(peerChangeEvent);
-        });
-        viewModel.deviceId.observe(this, newMeshId -> {
-            recipientView.addNewDevice(newMeshId);
-        });
+        viewModel.colour.observe(this, colour -> layoutBackground.setBackgroundColor(ContextCompat.getColor(this, colour.getColourId())));
+        viewModel.peerChangedEvent.observe(this, peerChangeEvent -> recipientView.updatePeersList(peerChangeEvent));
+        viewModel.deviceId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
     }
 
     private void initViewModel(Bundle savedInstanceState) {
