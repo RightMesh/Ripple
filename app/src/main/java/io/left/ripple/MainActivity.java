@@ -1,62 +1,37 @@
 package io.left.ripple;
 
-import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
-import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
-import static io.left.ripple.Colour.BLUE;
-import static io.left.ripple.Colour.GREEN;
-import static io.left.ripple.Colour.RED;
-
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
-import io.left.rightmesh.android.AndroidMeshManager;
+import android.widget.Button;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
 import io.left.rightmesh.id.MeshId;
-import io.left.rightmesh.mesh.MeshManager.DataReceivedEvent;
-import io.left.rightmesh.mesh.MeshManager.RightMeshEvent;
-import io.left.rightmesh.mesh.MeshStateListener;
-import io.left.rightmesh.util.RightMeshException;
-import io.left.rightmesh.util.RightMeshException.RightMeshServiceDisconnectedException;
 
 
 /**
  * A simple activity to demonstrate the movement of data through a RightMesh mesh network.
  *
- * <p>
- *     Initializes the RightMesh library, allows users to change the background colour of the app,
- *     then propagate that new background colour out to another peer on the mesh, changing the
- *     background colour of the peers that transmit the message along the way.
- * </p>
+ *
+ * Initializes the RightMesh library, allows users to change the background colour of the app,
+ * then propagate that new background colour out to another peer on the mesh, changing the
+ * background colour of the peers that transmit the message along the way.
  */
-public class MainActivity extends AppCompatActivity implements MeshStateListener,
-        RightMeshRecipientComponent.RecipientChangedListener {
+public class MainActivity extends AppCompatActivity{
     private static final String TAG = MainActivity.class.getCanonicalName();
 
-    // Interface object for the RightMesh library.
-    AndroidMeshManager androidMeshManager;
-
-    / Update this to your assigned mesh port.
-    private static final int MESH_PORT = 9001;
-
-    // Current background colour.
-    Colour colour = RED;
-
-    // MeshId of the peer to send to when the send button is pressed.
-    MeshId targetId = null;
-
-    // Stores the MeshId of this device so that it doesn't need to be retrieved with a service call.
-    MeshId deviceId = null;
+    MainViewModel viewModel;
 
     // Responsible for allowing the user to select the ping recipient.
-    RightMeshRecipientComponent component = null;
-
-    // Adapter for tracking views and the spinner it feeds, both mostly powered by `component`.
-    MeshIdAdapter peersListAdapter = null;
-
-    //
-    // ANDROID LIFECYCLE MANAGEMENT
-    //
+    CustomViewRightMeshRecipient recipientView;
+    FloatingActionButton fabSend, fabSendAll;
+    Button btnRed, btnGreen, btnBlue;
+    View layoutBackground;
 
     /**
      * Set Android UI event handlers and connect to the RightMesh library when the
@@ -67,193 +42,76 @@ public class MainActivity extends AppCompatActivity implements MeshStateListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        View buttonSend = findViewById(R.id.button_send);
-        buttonSend.setOnClickListener(v -> sendMessage(targetId, colour));
+        fabSend = findViewById(R.id.button_send);
+        fabSendAll = findViewById(R.id.button_send_all);
+        layoutBackground = findViewById(R.id.layout_background);
+        btnRed = findViewById(R.id.button_red);
+        btnBlue = findViewById(R.id.button_blue);
+        btnGreen = findViewById(R.id.button_green);
 
-        View buttonSendAll = findViewById(R.id.button_sendAll);
-        buttonSendAll.setOnClickListener(v -> sendAll());
+        initViewModel(savedInstanceState);
+        observeViewModel();
 
         // Display the RightMesh settings activity when the send button is tapped and held.
-        buttonSend.setLongClickable(true);
-        buttonSend.setOnLongClickListener(v -> {
-            try {
-                androidMeshManager.showSettingsActivity();
-            } catch (RightMeshException ignored) { /* Meh. */ }
+        fabSend.setOnLongClickListener(v -> {
+            viewModel.showSettingsActivity();
             return true;
         });
+        fabSend.setOnClickListener(this::sendSingleMsg);
+        fabSendAll.setOnClickListener(this::sendAllRecipients);
 
-        // Change the background colour when the respective colour buttons are pressed.
-        findViewById(R.id.button_red).setOnClickListener(v -> setColour(RED));
-        findViewById(R.id.button_green).setOnClickListener(v -> setColour(GREEN));
-        findViewById(R.id.button_blue).setOnClickListener(v -> setColour(BLUE));
+        btnRed.setOnClickListener(this::colorButtonClick);
+        btnGreen.setOnClickListener(this::colorButtonClick);
+        btnBlue.setOnClickListener(this::colorButtonClick);
 
         // Set up the recipient selection spinner.
-        peersListAdapter = new MeshIdAdapter(this);
-        component = (RightMeshRecipientComponent) getFragmentManager()
-                .findFragmentById(R.id.recipient_component);
-        component.setSpinnerAdapter(peersListAdapter);
-        component.setOnRecipientChangedListener(this);
-
-        // Initialize the RightMesh library with the SSID pattern "Ripple".
-        androidMeshManager = AndroidMeshManager.getInstance(MainActivity.this, MainActivity.this);
+        recipientView = findViewById(R.id.rightmesh_recipient);
+        recipientView.setOnRecipientChangedListener(recipient -> {
+            viewModel.setRecipient(recipient);
+        });
     }
 
-    /**
-     * Resume RightMesh connection on activity resume.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            androidMeshManager.resume();
-        } catch (RightMeshServiceDisconnectedException e) {
-            Log.e(TAG, "Service disconnected before resuming AndroidMeshManager with message"
-                    + e.getMessage());
+    private void colorButtonClick(View view) {
+        Colour colour = null;
+        if(view == btnGreen)
+            colour = Colour.GREEN;
+        else if(view == btnRed)
+            colour = Colour.RED;
+        else
+            colour = Colour.BLUE;
+
+        viewModel.setColour(colour);
+    }
+
+    private void sendSingleMsg(View view) {
+        viewModel.sendColorMsg();
+    }
+
+    private void sendAllRecipients(View view) {
+        MeshIdAdapter recipientAdapter = recipientView.getAdapter();
+        Colour crrColour = viewModel.colour.getValue();
+
+        for (int i = 0; i < recipientAdapter.getCount(); i++) {
+            MeshId peer = recipientAdapter.getItem(i);
+            viewModel.sendColorMsg(peer, crrColour);
         }
     }
 
-    /**
-     * Close RightMesh connection when activity is destroyed.
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            androidMeshManager.stop();
-        } catch (RightMeshServiceDisconnectedException e) {
-            Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
-                    + e.getMessage());
-        }
+    private void observeViewModel() {
+        viewModel.colour.observe(this, colour -> {
+            layoutBackground.setBackgroundColor(ContextCompat.getColor(this, colour.getColourId()));
+        });
+        viewModel.peerChangedEvent.observe(this, peerChangeEvent -> {
+            recipientView.updatePeersList(peerChangeEvent);
+        });
+        viewModel.deviceId.observe(this, newMeshId -> {
+            recipientView.addNewDevice(newMeshId);
+        });
     }
 
-    //
-    // ANDROID UI EVENT HANDLERS
-    //
-
-    /**
-     * Sends a message containing the specified recipient's ID and the colour to change to to the
-     * NEXT HOP between this device and the recipient.
-     *
-     * @param recipient final intended recipient of the message
-     * @param messageColour to send
-     */
-    private void sendMessage(MeshId recipient, Colour messageColour) {
-        try {
-            if (recipient != null) {
-                String payload = recipient.toString() + ":" + messageColour.toString();
-                androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(recipient),
-                        MESH_PORT, payload.getBytes());
-            }
-        } catch (RightMeshServiceDisconnectedException sde) {
-            Log.e(TAG, "Service disconnected while sending data, with message: "
-                    + sde.getMessage());
-        } catch (RightMeshException rme) {
-            Log.e(TAG, "Unable to find next hop to peer, with message: " + rme.getMessage());
-        }
-    }
-
-    /**
-     * Sends a message (using {@link MainActivity#sendMessage(MeshId, Colour)}) to all peers.
-     */
-    private void sendAll() {
-        for (int currentPeerIndex = 0;
-                currentPeerIndex < peersListAdapter.getCount();
-                 currentPeerIndex++) {
-            MeshId peer = peersListAdapter.getItem(currentPeerIndex);
-            sendMessage(peer, colour);
-        }
-    }
-
-    /**
-     * Changes the background to the supplied colour, if valid.
-     *
-     * @param colour colour to change to
-     */
-    private void setColour(Colour colour) {
-        final int colourCode = colour.getColourId();
-
-        // Change colour if the code is valid.
-        if (colourCode != -1) {
-            this.colour = colour;
-            runOnUiThread(() -> {
-                MainActivity.this.findViewById(R.id.layout_background)
-                        .setBackgroundColor(ContextCompat.getColor(this, colourCode));
-            });
-        }
-    }
-
-    //
-    // RIGHTMESH EVENT HANDLERS
-    //
-
-    /**
-     * Configures event handlers and binds to a port when the RightMesh library is ready.
-     *
-     * @param meshId ID of this device
-     * @param state new state of the RightMesh library
-     */
-    @Override
-    public void meshStateChanged(MeshId meshId, int state) {
-        deviceId = meshId;
-        if (state == SUCCESS) {
-            try {
-                // Attempt to bind to a port.
-                androidMeshManager.bind(MESH_PORT);
-
-                // Update the peers list.
-                peersListAdapter.add(deviceId);
-                peersListAdapter.setDeviceId(deviceId);
-                runOnUiThread(() -> peersListAdapter.notifyDataSetChanged());
-
-                // Bind RightMesh event handlers.
-                androidMeshManager.on(DATA_RECEIVED, MainActivity.this::receiveColourMessage);
-                androidMeshManager.on(PEER_CHANGED, e -> runOnUiThread(() ->
-                        component.updatePeersList(e)));
-            } catch (RightMeshServiceDisconnectedException sde) {
-                Log.e(TAG, "Service disconnected while binding, with message: "
-                        + sde.getMessage());
-            } catch (RightMeshException rme) {
-                Log.e(TAG, "MeshPort already bound, with message: " + rme.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Handles an incoming message by changing the screen colour and passing along the message.
-     *
-     * @param rme generic event passed by RightMesh
-     */
-    private void receiveColourMessage(RightMeshEvent rme) {
-        // Retrieve data from event.
-        DataReceivedEvent dre = (DataReceivedEvent) rme;
-        String dataString = new String(dre.data);
-        int separatorIndex = dataString.indexOf(':');
-
-        // Transmit the message forward if this device is not the intended final recipient.
-        MeshId recipient = null;
-        try {
-            recipient = MeshId.fromString(dataString.substring(0,separatorIndex));
-        } catch (RightMeshException e) {
-            Log.e(TAG,"error creating meshId " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
-        if (!recipient.equals(deviceId)) {
-            sendMessage(recipient, Colour.valueOf(
-                    dataString.substring(separatorIndex + 1).toString()));
-        }
-
-        // Change the colour of this phone to illustrate the path of the data.
-        setColour(Colour.valueOf(dataString.substring(separatorIndex + 1).toString()));
-    }
-
-    /**
-     * Update the message targetId when the user selects a new recipient.
-     *
-     * @param recipient new targetId
-     */
-    @Override
-    public void onChange(MeshId recipient) {
-        targetId = recipient;
+    private void initViewModel(Bundle savedInstanceState) {
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        if(savedInstanceState == null)
+            viewModel.init();
     }
 }

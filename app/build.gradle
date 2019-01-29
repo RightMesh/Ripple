@@ -2,7 +2,7 @@
 // To do this in Android Studio: https://stackoverflow.com/a/49994951/4082582
 plugins {
     id 'com.android.application'
-    id 'io.left.rightmesh.rightmesh-plugin' version '1.8.1'
+    id 'io.left.rightmesh.rightmesh-plugin' version '1.8.4'
 }
 rightmesh {
     //specified in your global gradle.properties files
@@ -22,7 +22,7 @@ repositories {
             password rightmesh_build_password
         }
     }
-    maven{
+    maven {
         url "https://dl.bintray.com/ethereum/maven"
     }
 }
@@ -45,14 +45,15 @@ android {
     lintOptions {
         abortOnError false
     }
-
 }
 
 dependencies {
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation ('io.left.rightmesh:lib-rightmesh-android:0.10.0')
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation('io.left.rightmesh:lib-rightmesh-android:0.10.0')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
 }

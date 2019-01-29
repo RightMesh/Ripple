@@ -1,64 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_background"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/red"
     android:orientation="vertical"
-    tools:context="io.left.ripple.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context="io.left.ripple.MainActivity">
 
-    <fragment
-        android:id="@+id/recipient_component"
+    <io.left.ripple.CustomViewRightMeshRecipient
+        android:id="@+id/rightmesh_recipient"
         android:name="io.left.ripple.RightMeshRecipientComponent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/component_rightmesh" />
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/customview_component_rightmesh" />
+
+    <TextView
+        android:id="@+id/tv_countdown"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="144sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_button"
+        app:layout_constraintTop_toBottomOf="@+id/rightmesh_recipient"
+        tools:text="10" />
+
 
     <LinearLayout
+        android:id="@+id/layout_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/red"
-        android:id="@+id/layout_background"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/text_countdown"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="144sp"
-            android:layout_weight="1"
-            android:textStyle="bold" />
-
-        <LinearLayout
+        <Button
+            android:id="@+id/button_red"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="@string/red" />
 
-            <Button
-                android:id="@+id/button_red"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/red" />
+        <Button
+            android:id="@+id/button_green"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/green" />
 
-            <Button
-                android:id="@+id/button_green"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/green" />
-
-            <Button
-                android:id="@+id/button_blue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/blue" />
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/button_blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/blue" />
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
