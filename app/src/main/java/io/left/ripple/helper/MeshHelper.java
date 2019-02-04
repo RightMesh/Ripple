@@ -9,9 +9,21 @@ public class MeshHelper {
     private MeshHelper() {
     }
 
-    public static MeshHelper getInstance(){
-        if(instance == null)
-            instance = new MeshHelper();
+    /**
+     * Get single object.
+     * @return MeshHelper
+     */
+    public static MeshHelper getInstance() {
+        if (instance == null) {
+            //synchronized block to remove overhead
+            synchronized (MeshHelper.class) {
+                if (instance == null) {
+                    // if instance is null, initialize
+                    instance = new MeshHelper();
+                }
+
+            }
+        }
 
         return instance;
     }

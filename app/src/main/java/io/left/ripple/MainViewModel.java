@@ -1,5 +1,9 @@
 package io.left.ripple;
 
+import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
+import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
+import static io.left.ripple.Colour.RED;
+
 import android.app.Application;
 import android.util.Log;
 
@@ -13,10 +17,6 @@ import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
-
-import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
-import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
-import static io.left.ripple.Colour.RED;
 
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
@@ -42,6 +42,10 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
 
     private MeshId currentTargetMeshId = null;
 
+    /**
+     * Viewmodel constructor.
+     * @param application Application context
+     */
     public MainViewModel(@NonNull Application application) {
         super(application);
 
@@ -85,7 +89,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         } catch (RightMeshException ignored) { /* Meh. */ }
     }
 
-    void sendColorMsg(MeshId targetMeshId, Colour msgColor){
+    void sendColorMsg(MeshId targetMeshId, Colour msgColor) {
         try {
             if (targetMeshId != null) {
                 String payload = targetMeshId.toString() + ":" + msgColor.toString();
@@ -101,7 +105,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     }
 
     /**
-     * Send current selected colour to currentTargetMeshId
+     * Send current selected colour to currentTargetMeshId.
      */
     void sendColorMsg() {
         sendColorMsg(currentTargetMeshId,

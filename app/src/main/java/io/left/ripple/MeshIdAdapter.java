@@ -4,13 +4,13 @@ import static io.left.ripple.Colour.BLUE;
 import static io.left.ripple.Colour.TEXT_LIGHT;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import io.left.rightmesh.id.MeshId;
 import io.left.ripple.helper.MeshHelper;
 

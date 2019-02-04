@@ -1,37 +1,39 @@
 package io.left.ripple;
 
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import io.left.rightmesh.id.MeshId;
 import io.left.ripple.views.CustomViewRightMeshRecipient;
 
 
 /**
  * A simple activity to demonstrate the movement of data through a RightMesh mesh network.
- *
- *
+ * <p>
+ * <p>
  * Initializes the RightMesh library, allows users to change the background colour of the app,
  * then propagate that new background colour out to another peer on the mesh, changing the
  * background colour of the peers that transmit the message along the way.
  */
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
 
     MainViewModel viewModel;
 
     // Responsible for allowing the user to select the ping recipient.
     CustomViewRightMeshRecipient recipientView;
-    FloatingActionButton fabSend, fabSendAll;
-    Button btnRed, btnGreen, btnBlue;
+    FloatingActionButton fabSend;
+    FloatingActionButton fabSendAll;
+    Button buttonRed;
+    Button buttonGreen;
+    Button buttonBlue;
     View layoutBackground;
 
     /**
@@ -46,9 +48,9 @@ public class MainActivity extends AppCompatActivity{
         fabSend = findViewById(R.id.button_send);
         fabSendAll = findViewById(R.id.button_send_all);
         layoutBackground = findViewById(R.id.layout_background);
-        btnRed = findViewById(R.id.button_red);
-        btnBlue = findViewById(R.id.button_blue);
-        btnGreen = findViewById(R.id.button_green);
+        buttonRed = findViewById(R.id.button_red);
+        buttonBlue = findViewById(R.id.button_blue);
+        buttonGreen = findViewById(R.id.button_green);
 
         initViewModel(savedInstanceState);
         observeViewModel();
@@ -61,9 +63,9 @@ public class MainActivity extends AppCompatActivity{
         fabSend.setOnClickListener(this::sendSingleMsg);
         fabSendAll.setOnClickListener(this::sendAllRecipients);
 
-        btnRed.setOnClickListener(this::colorButtonClick);
-        btnGreen.setOnClickListener(this::colorButtonClick);
-        btnBlue.setOnClickListener(this::colorButtonClick);
+        buttonRed.setOnClickListener(this::colorButtonClick);
+        buttonGreen.setOnClickListener(this::colorButtonClick);
+        buttonBlue.setOnClickListener(this::colorButtonClick);
 
         // Set up the recipient selection spinner.
         recipientView = findViewById(R.id.rightmesh_recipient);
@@ -72,12 +74,13 @@ public class MainActivity extends AppCompatActivity{
 
     private void colorButtonClick(View view) {
         Colour colour;
-        if(view == btnGreen)
+        if (view == buttonGreen) {
             colour = Colour.GREEN;
-        else if(view == btnRed)
+        } else if (view == buttonRed) {
             colour = Colour.RED;
-        else
+        } else {
             colour = Colour.BLUE;
+        }
 
         viewModel.setColour(colour);
     }
@@ -97,14 +100,18 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void observeViewModel() {
-        viewModel.colour.observe(this, colour -> layoutBackground.setBackgroundColor(ContextCompat.getColor(this, colour.getColourId())));
-        viewModel.peerChangedEvent.observe(this, peerChangeEvent -> recipientView.updatePeersList(peerChangeEvent));
+        viewModel.colour.observe(this, colour ->
+                layoutBackground.setBackgroundColor(
+                        ContextCompat.getColor(this, colour.getColourId())));
+        viewModel.peerChangedEvent.observe(this, peerChangeEvent ->
+                recipientView.updatePeersList(peerChangeEvent));
         viewModel.deviceId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
     }
 
     private void initViewModel(Bundle savedInstanceState) {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        if(savedInstanceState == null)
+        if (savedInstanceState == null) {
             viewModel.init();
+        }
     }
 }
