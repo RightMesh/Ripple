@@ -40,21 +40,47 @@ public class CustomViewRightMeshRecipient extends ConstraintLayout
 
     private RecipientChangedListener onRecipientChangedListener = null;
 
+    /**
+     * Used when instantiating Views programmatically.
+     *
+     * @param context View context
+     */
     public CustomViewRightMeshRecipient(Context context) {
         super(context);
         init(context);
     }
 
+    /**
+     * {@link CustomViewRightMeshRecipient} constructor<br>.
+     *
+     * Trigger in xml declaration.
+     *
+     * @param context View context
+     * @param attrs attribute
+     */
     public CustomViewRightMeshRecipient(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
+    /**
+     * {@link CustomViewRightMeshRecipient} constructor<br>.
+     *
+     * Trigger in xml declaration with android:style attribute
+     *
+     * @param context View context
+     * @param attrs Attribute
+     * @param defStyleAttr applied style
+     */
     public CustomViewRightMeshRecipient(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
+    /**
+     * Init {@link CustomViewRightMeshRecipient}.
+     * @param context View context.
+     */
     private void init(Context context) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -177,11 +203,19 @@ public class CustomViewRightMeshRecipient extends ConstraintLayout
         adapterRecipient.notifyDataSetChanged();
     }
 
+    /**
+     * Get spinner adapter.
+     * @return Current {@link MeshIdAdapter}.
+     */
     public MeshIdAdapter getAdapter() {
         return adapterRecipient;
     }
 
     public interface RecipientChangedListener {
+        /**
+         * Change and add the recipient to spinner.
+         * @param recipient Connected device.
+         */
         void onRecipientChanged(MeshId recipient);
     }
 }

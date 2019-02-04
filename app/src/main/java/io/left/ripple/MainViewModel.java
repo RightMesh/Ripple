@@ -52,6 +52,9 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         colour.setValue(RED);
     }
 
+    /**
+     * Init {@link MainViewModel}.
+     */
     void init() {
         // Initialize the RightMesh library with the SSID pattern "Ripple".
         androidMeshManager = AndroidMeshManager.getInstance(getApplication(), this);
@@ -83,12 +86,20 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         }
     }
 
+    /**
+     * Open Rightmesh Setting page
+     */
     void showSettingsActivity() {
         try {
             androidMeshManager.showSettingsActivity();
         } catch (RightMeshException ignored) { /* Meh. */ }
     }
 
+    /**
+     * Send Color to target device.
+     * @param targetMeshId MeshId will receive this msg.
+     * @param msgColor Message color.
+     */
     void sendColorMsg(MeshId targetMeshId, Colour msgColor) {
         try {
             if (targetMeshId != null) {
@@ -179,6 +190,10 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         setColour(Colour.valueOf(dataString.substring(separatorIndex + 1)));
     }
 
+    /**
+     * Set {@link MeshId} that will receive msg.
+     * @param meshId
+     */
     void setRecipient(MeshId meshId) {
         currentTargetMeshId = meshId;
     }
