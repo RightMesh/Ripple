@@ -32,7 +32,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     private AndroidMeshManager androidMeshManager;
 
     // Update this to your assigned mesh port.
-    private static final int MESH_PORT = 1001;
+    private static final int MESH_PORT = 9001;
 
     // Current background colour
     MutableLiveData<Colour> colour = new MutableLiveData<>();
