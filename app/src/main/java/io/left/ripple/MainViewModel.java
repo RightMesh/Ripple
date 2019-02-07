@@ -1,5 +1,9 @@
 package io.left.ripple;
 
+import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
+import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
+import static io.left.ripple.Colour.RED;
+
 import android.app.Application;
 import android.util.Log;
 
@@ -13,10 +17,6 @@ import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
-
-import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
-import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
-import static io.left.ripple.Colour.RED;
 
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
@@ -32,7 +32,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     private AndroidMeshManager androidMeshManager;
 
     // Update this to your assigned mesh port.
-    private static final int MESH_PORT = 1001;
+    private static final int MESH_PORT = 9001;
 
     // Current background colour
     MutableLiveData<Colour> colour = new MutableLiveData<>();
@@ -42,12 +42,19 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
 
     private MeshId currentTargetMeshId = null;
 
+    /**
+     * Viewmodel constructor.
+     * @param application Application context
+     */
     public MainViewModel(@NonNull Application application) {
         super(application);
 
         colour.setValue(RED);
     }
 
+    /**
+     * Init {@link MainViewModel}.
+     */
     void init() {
         // Initialize the RightMesh library with the SSID pattern "Ripple".
         androidMeshManager = AndroidMeshManager.getInstance(getApplication(), this);
@@ -79,13 +86,21 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         }
     }
 
+    /**
+     * Open Rightmesh Setting page
+     */
     void showSettingsActivity() {
         try {
             androidMeshManager.showSettingsActivity();
         } catch (RightMeshException ignored) { /* Meh. */ }
     }
 
-    void sendColorMsg(MeshId targetMeshId, Colour msgColor){
+    /**
+     * Send Color to target device.
+     * @param targetMeshId MeshId will receive this msg.
+     * @param msgColor Message color.
+     */
+    void sendColorMsg(MeshId targetMeshId, Colour msgColor) {
         try {
             if (targetMeshId != null) {
                 String payload = targetMeshId.toString() + ":" + msgColor.toString();
@@ -101,7 +116,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     }
 
     /**
-     * Send current selected colour to currentTargetMeshId
+     * Send current selected colour to currentTargetMeshId.
      */
     void sendColorMsg() {
         sendColorMsg(currentTargetMeshId,
@@ -175,6 +190,10 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
         setColour(Colour.valueOf(dataString.substring(separatorIndex + 1)));
     }
 
+    /**
+     * Set {@link MeshId} that will receive msg.
+     * @param meshId
+     */
     void setRecipient(MeshId meshId) {
         currentTargetMeshId = meshId;
     }
