@@ -16,8 +16,7 @@ import io.left.ripple.views.CustomViewRightMeshRecipient;
 
 /**
  * A simple activity to demonstrate the movement of data through a RightMesh mesh network.
- * <p>
- * <p>
+ *
  * Initializes the RightMesh library, allows users to change the background colour of the app,
  * then propagate that new background colour out to another peer on the mesh, changing the
  * background colour of the peers that transmit the message along the way.
