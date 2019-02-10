@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         ContextCompat.getColor(this, colour.getColourId())));
         viewModel.peerChangedEvent.observe(this, peerChangeEvent ->
                 recipientView.updatePeersList(peerChangeEvent));
-        viewModel.deviceId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
+        viewModel.myMeshId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
     }
 
     private void initViewModel(Bundle savedInstanceState) {

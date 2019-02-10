@@ -1,7 +1,5 @@
 package io.left.ripple;
 
-import static io.left.rightmesh.mesh.MeshManager.DATA_RECEIVED;
-import static io.left.rightmesh.mesh.MeshManager.PEER_CHANGED;
 import static io.left.ripple.Colour.RED;
 
 import android.app.Application;
@@ -9,13 +7,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.OnLifecycleEvent;
-import io.left.rightmesh.android.AndroidMeshManager;
 import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager;
-import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 
 /**
@@ -31,13 +25,13 @@ public class MainViewModel extends AndroidViewModel {
     // Update this to your assigned mesh port.
     private static final int MESH_PORT = 9001;
 
-    RightMeshConnector rmConnector;
+    private RightMeshConnector rmConnector;
 
     // Current background colour
     MutableLiveData<Colour> colour = new MutableLiveData<>();
     MutableLiveData<MeshManager.RightMeshEvent> peerChangedEvent = new MutableLiveData<>();
     // Stores the MeshId of this device so that it doesn't need to be retrieved with a service call.
-    MutableLiveData<MeshId> deviceId = new MutableLiveData<>();
+    MutableLiveData<MeshId> myMeshId = new MutableLiveData<>();
 
     private MeshId currentTargetMeshId = null;
 
@@ -62,20 +56,35 @@ public class MainViewModel extends AndroidViewModel {
 
         rmConnector.setOnDataReceiveListener(event -> receiveColourMessage(event));
         rmConnector.setOnPeerChangedListener(event -> peerChangedEvent.postValue(event));
-        rmConnector.setOnMyMeshIdReceivingListener(meshId -> deviceId.setValue(meshId));
+        rmConnector.setOnMyMeshIdReceivingListener(meshId -> myMeshId.setValue(meshId));
     }
 
     /**
-     * Close RightMesh connection when activity is destroyed.
+     * {@link RightMeshConnector} Setter.
+     * (using for testing)
+     *
+     * @param rmConnector {@link RightMeshConnector}
      */
-    @Override
-    protected void onCleared() {
-        try {
-            rmConnector.stop();
-        } catch (RightMeshException.RightMeshServiceDisconnectedException e) {
-            Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
-                    + e.getMessage());
-        }
+    public void setRMConnector(RightMeshConnector rmConnector) {
+        this.rmConnector = rmConnector;
+    }
+
+    /**
+     * Changes the background to the supplied colour, if valid.
+     *
+     * @param colour colour to change to
+     */
+    void setColour(Colour colour) {
+        this.colour.postValue(colour);
+    }
+
+    /**
+     * Set {@link MeshId} that will receive msg.
+     *
+     * @param targetMeshId Target MeshId
+     */
+    void setRecipient(MeshId targetMeshId) {
+        currentTargetMeshId = targetMeshId;
     }
 
     /**
@@ -117,16 +126,6 @@ public class MainViewModel extends AndroidViewModel {
                 colour.getValue());
     }
 
-
-    /**
-     * Changes the background to the supplied colour, if valid.
-     *
-     * @param colour colour to change to
-     */
-    void setColour(Colour colour) {
-        this.colour.postValue(colour);
-    }
-
     /**
      * Handles an incoming message by changing the screen colour and passing along the message.
      *
@@ -147,7 +146,7 @@ public class MainViewModel extends AndroidViewModel {
             e.printStackTrace();
             return;
         }
-        if (!recipient.equals(deviceId.getValue())) {
+        if (!recipient.equals(myMeshId.getValue())) {
             sendColorMsg(recipient, Colour.valueOf(
                     dataString.substring(separatorIndex + 1)));
         }
@@ -157,11 +156,15 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     /**
-     * Set {@link MeshId} that will receive msg.
-     *
-     * @param targetMeshId Target MeshId
+     * Close RightMesh connection when activity is destroyed.
      */
-    void setRecipient(MeshId targetMeshId) {
-        currentTargetMeshId = targetMeshId;
+    @Override
+    protected void onCleared() {
+        try {
+            rmConnector.stop();
+        } catch (RightMeshException.RightMeshServiceDisconnectedException e) {
+            Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
+                    + e.getMessage());
+        }
     }
 }
