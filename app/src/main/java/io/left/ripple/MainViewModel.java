@@ -20,19 +20,18 @@ import io.left.rightmesh.util.RightMeshException;
 
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
- *
+ * <p>
  * Reason to extend AndroidViewModel
- *      Allow data to survive configuration changes (Eg: screen rotation, locale changing)
- *      Activity lifecycle consciousness
+ * Allow data to survive configuration changes (Eg: screen rotation, locale changing)
+ * Activity lifecycle consciousness
  */
-public class MainViewModel extends AndroidViewModel implements MeshStateListener {
+public class MainViewModel extends AndroidViewModel {
     private static final String TAG = MainViewModel.class.getCanonicalName();
-
-    // Interface object for the RightMesh library.
-    private AndroidMeshManager androidMeshManager;
 
     // Update this to your assigned mesh port.
     private static final int MESH_PORT = 9001;
+
+    RightMeshConnector rmConnector;
 
     // Current background colour
     MutableLiveData<Colour> colour = new MutableLiveData<>();
@@ -44,12 +43,14 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
 
     /**
      * Viewmodel constructor.
+     *
      * @param application Application context
      */
     public MainViewModel(@NonNull Application application) {
         super(application);
 
         colour.setValue(RED);
+        rmConnector = new RightMeshConnector(MESH_PORT);
     }
 
     /**
@@ -57,20 +58,11 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
      */
     void init() {
         // Initialize the RightMesh library with the SSID pattern "Ripple".
-        androidMeshManager = AndroidMeshManager.getInstance(getApplication(), this);
-    }
+        rmConnector.connect(getApplication());
 
-    /**
-     * Resume RightMesh connection on activity resume.
-     */
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    public void onResume() {
-        try {
-            androidMeshManager.resume();
-        } catch (RightMeshException.RightMeshServiceDisconnectedException e) {
-            Log.e(TAG, "Service disconnected before resuming AndroidMeshManager with message"
-                    + e.getMessage());
-        }
+        rmConnector.setOnDataReceiveListener(event -> receiveColourMessage(event));
+        rmConnector.setOnPeerChangedListener(event -> peerChangedEvent.postValue(event));
+        rmConnector.setOnMyMeshIdReceivingListener(meshId -> deviceId.setValue(meshId));
     }
 
     /**
@@ -79,7 +71,7 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     @Override
     protected void onCleared() {
         try {
-            androidMeshManager.stop();
+            rmConnector.stop();
         } catch (RightMeshException.RightMeshServiceDisconnectedException e) {
             Log.e(TAG, "Service disconnected before stopping AndroidMeshManager with message"
                     + e.getMessage());
@@ -87,25 +79,27 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     }
 
     /**
-     * Open Rightmesh Setting page
+     * Open Rightmesh Setting page.
      */
-    void showSettingsActivity() {
+    void toRightMeshWalletActivty() {
         try {
-            androidMeshManager.showSettingsActivity();
-        } catch (RightMeshException ignored) { /* Meh. */ }
+            rmConnector.toRightMeshWalletActivty();
+        } catch (RightMeshException e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     /**
      * Send Color to target device.
+     *
      * @param targetMeshId MeshId will receive this msg.
-     * @param msgColor Message color.
+     * @param msgColor     Message color.
      */
     void sendColorMsg(MeshId targetMeshId, Colour msgColor) {
         try {
             if (targetMeshId != null) {
                 String payload = targetMeshId.toString() + ":" + msgColor.toString();
-                androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(targetMeshId),
-                        MESH_PORT, payload.getBytes());
+                rmConnector.sentDataReliable(targetMeshId, payload);
             }
         } catch (RightMeshException.RightMeshServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
@@ -121,34 +115,6 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
     void sendColorMsg() {
         sendColorMsg(currentTargetMeshId,
                 colour.getValue());
-    }
-
-    /**
-     * Configures event handlers and binds to a port when the RightMesh library is ready.
-     *
-     * @param meshId ID of this device
-     * @param state  new state of the RightMesh library
-     */
-    @Override
-    public void meshStateChanged(MeshId meshId, int state) {
-        if (state == SUCCESS) {
-            try {
-                // Attempt to bind to a port.
-                androidMeshManager.bind(MESH_PORT);
-
-                // Update the peers list.
-                deviceId.setValue(meshId);
-
-                // Bind RightMesh event handlers.
-                androidMeshManager.on(DATA_RECEIVED, this::receiveColourMessage);
-                androidMeshManager.on(PEER_CHANGED, event -> peerChangedEvent.postValue(event));
-            } catch (RightMeshException.RightMeshServiceDisconnectedException sde) {
-                Log.e(TAG, "Service disconnected while binding, with message: "
-                        + sde.getMessage());
-            } catch (RightMeshException rme) {
-                Log.e(TAG, "MeshPort already bound, with message: " + rme.getMessage());
-            }
-        }
     }
 
 
@@ -192,9 +158,10 @@ public class MainViewModel extends AndroidViewModel implements MeshStateListener
 
     /**
      * Set {@link MeshId} that will receive msg.
-     * @param meshId
+     *
+     * @param targetMeshId Target MeshId
      */
-    void setRecipient(MeshId meshId) {
-        currentTargetMeshId = meshId;
+    void setRecipient(MeshId targetMeshId) {
+        currentTargetMeshId = targetMeshId;
     }
 }

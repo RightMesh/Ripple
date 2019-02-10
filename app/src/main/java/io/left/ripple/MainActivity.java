@@ -56,9 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Display the RightMesh settings activity when the send button is tapped and held.
         fabSend.setOnLongClickListener(v -> {
-            viewModel.showSettingsActivity();
+            viewModel.toRightMeshWalletActivty();
             return true;
         });
+
         fabSend.setOnClickListener(this::sendSingleMsg);
         fabSendAll.setOnClickListener(this::sendAllRecipients);
 
