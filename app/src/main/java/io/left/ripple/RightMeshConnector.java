@@ -13,7 +13,7 @@ import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 
 /**
- * Play the role of communicate with Rightmesh service.
+ * To communicate with Rightmesh service.
  */
 public class RightMeshConnector implements MeshStateListener {
     private static final String TAG = RightMeshConnector.class.getCanonicalName();

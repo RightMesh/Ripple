@@ -1,7 +1,6 @@
 package io.left.ripple;
 
 import android.app.Application;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,9 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import io.left.rightmesh.id.MeshId;
@@ -20,7 +17,6 @@ import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.util.RightMeshException;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -37,8 +33,6 @@ public class MainViewModelTest {
     private RightMeshConnector rightMeshConnector;
     @Mock
     private MeshId mockMeshId;
-    @Mock
-    private MeshManager.DataReceivedEvent rmEvent;
 
     private MainViewModel SUT;
 
@@ -47,7 +41,7 @@ public class MainViewModelTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         SUT = new MainViewModel(application);
-        SUT.setRMConnector(rightMeshConnector);
+        SUT.setRightMeshConnector(rightMeshConnector);
     }
 
     @Test

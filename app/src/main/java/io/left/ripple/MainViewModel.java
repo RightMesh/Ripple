@@ -65,7 +65,7 @@ public class MainViewModel extends AndroidViewModel {
      *
      * @param rmConnector {@link RightMeshConnector}
      */
-    public void setRMConnector(RightMeshConnector rmConnector) {
+    public void setRightMeshConnector(RightMeshConnector rmConnector) {
         this.rmConnector = rmConnector;
     }
 
