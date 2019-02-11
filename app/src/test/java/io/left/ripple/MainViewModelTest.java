@@ -13,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import io.left.rightmesh.id.MeshId;
-import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.util.RightMeshException;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class MainViewModelTest {
     // Executes each task synchronously using Architecture Components.
+    //Using for testing Android ViewModel
     @Rule
     public InstantTaskExecutorRule rule = new InstantTaskExecutorRule();
 
@@ -52,7 +52,7 @@ public class MainViewModelTest {
         spyViewModel.init();
 
         //verify
-        verify(rightMeshConnector).setOnMyMeshIdReceivingListener(any());
+        verify(rightMeshConnector).setOnConnectSuccessListener(any());
         verify(rightMeshConnector).setOnPeerChangedListener(any());
         verify(rightMeshConnector).setOnDataReceiveListener(any());
         verify(spyViewModel).init();

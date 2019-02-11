@@ -23,12 +23,12 @@ public class RightMeshConnector implements MeshStateListener {
     // Interface object for the RightMesh library.
     private AndroidMeshManager androidMeshManager;
 
-    //listener for data receive event
+    //listener for data receiving event
     private OnDataReceiveListener dataReceiveListener;
-    //listener for peer change event
+    //listener for peer changing event
     private OnPeerChangedListener peerchangedListener;
-    //listener for my MeshId receiving event
-    private OnMyMeshIdReceivingListener myMeshIdReceivingListener;
+    //listener for connecting successful event
+    private OnConnectSuccessListener connectSuccessListener;
 
     /**
      * Constructor.
@@ -63,8 +63,8 @@ public class RightMeshConnector implements MeshStateListener {
                 androidMeshManager.bind(meshPort);
 
                 // Update the peers list.
-                if (myMeshIdReceivingListener != null) {
-                    myMeshIdReceivingListener.onMyMeshIdReceiving(meshId);
+                if (connectSuccessListener != null) {
+                    connectSuccessListener.onConnectSuccess(meshId);
                 }
 
                 // Bind RightMesh event handlers.
@@ -120,8 +120,8 @@ public class RightMeshConnector implements MeshStateListener {
      *
      * @param listener a callback
      */
-    public void setOnMyMeshIdReceivingListener(OnMyMeshIdReceivingListener listener) {
-        this.myMeshIdReceivingListener = listener;
+    public void setOnConnectSuccessListener(OnConnectSuccessListener listener) {
+        this.connectSuccessListener = listener;
     }
 
     /**
@@ -148,6 +148,14 @@ public class RightMeshConnector implements MeshStateListener {
     }
 
     /**
+     * {@link AndroidMeshManager} setter used to testing purpose.
+     * @param androidMeshManager - should pass Mock object.
+     */
+    public void setAndroidMeshManager(AndroidMeshManager androidMeshManager) {
+        this.androidMeshManager = androidMeshManager;
+    }
+
+    /**
      * Data Receive Listener.
      */
     public interface OnDataReceiveListener {
@@ -164,7 +172,7 @@ public class RightMeshConnector implements MeshStateListener {
     /**
      * On my {@link MeshId} receiving listener.
      */
-    public interface OnMyMeshIdReceivingListener {
-        void onMyMeshIdReceiving(MeshId meshId);
+    public interface OnConnectSuccessListener {
+        void onConnectSuccess(MeshId meshId);
     }
 }

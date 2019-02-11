@@ -55,7 +55,7 @@ public class MainViewModel extends AndroidViewModel {
 
         rmConnector.setOnDataReceiveListener(event -> receiveColourMessage(event));
         rmConnector.setOnPeerChangedListener(event -> peerChangedEvent.postValue(event));
-        rmConnector.setOnMyMeshIdReceivingListener(meshId -> myMeshId.setValue(meshId));
+        rmConnector.setOnConnectSuccessListener(meshId -> myMeshId.setValue(meshId));
     }
 
     /**
