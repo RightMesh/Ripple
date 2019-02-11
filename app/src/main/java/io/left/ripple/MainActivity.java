@@ -99,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Binding data from viewmodel to UI
+     */
     private void observeViewModel() {
         viewModel.colour.observe(this, colour ->
                 layoutBackground.setBackgroundColor(
@@ -108,6 +111,13 @@ public class MainActivity extends AppCompatActivity {
         viewModel.myMeshId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
     }
 
+    /**
+     * Init viewmodel
+     *
+     * @param savedInstanceState avedInstanceState – If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it
+     *                           most recently supplied in
+     */
     private void initViewModel(Bundle savedInstanceState) {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         if (savedInstanceState == null) {

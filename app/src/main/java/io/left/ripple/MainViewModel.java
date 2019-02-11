@@ -14,7 +14,6 @@ import io.left.rightmesh.util.RightMeshException;
 
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
- * <p>
  * Reason to extend AndroidViewModel
  * Allow data to survive configuration changes (Eg: screen rotation, locale changing)
  * Activity lifecycle consciousness
