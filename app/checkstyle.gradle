@@ -2,6 +2,9 @@ apply plugin: 'checkstyle'
 
 checkstyle {
     toolVersion = '8.17'
+    ignoreFailures = false
+    maxErrors=0
+    maxWarnings=0
 }
 
 task checkstyle(type: Checkstyle) {
