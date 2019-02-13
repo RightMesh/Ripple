@@ -47,6 +47,8 @@ jobs:
   include:
   - stage: Build
     script: ./gradlew clean build -PdisablePreDex $PROPERTIES
+  - stage: Checkstyle
+    script: ./gradlew checkstyle $PROPERTIES
   - stage: Test
     name: Unit Tests
     script: ./gradlew test $PROPERTIES
