@@ -1,6 +1,15 @@
 package io.left.ripple;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import android.app.Application;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+
+import io.left.rightmesh.id.MeshId;
+import io.left.rightmesh.util.RightMeshException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,15 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import io.left.rightmesh.id.MeshId;
-import io.left.rightmesh.util.RightMeshException;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class MainViewModelTest {
@@ -36,9 +36,11 @@ public class MainViewModelTest {
 
     private MainViewModel SUT;
 
-
+    /**
+     * Run before each test method.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         SUT = new MainViewModel(application);
         SUT.setRightMeshConnector(rightMeshConnector);

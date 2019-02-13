@@ -4,6 +4,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+
+import io.left.rightmesh.android.AndroidMeshManager;
+import io.left.rightmesh.id.MeshId;
+import io.left.rightmesh.mesh.MeshStateListener;
+import io.left.rightmesh.util.RightMeshException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,12 +19,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import io.left.rightmesh.android.AndroidMeshManager;
-import io.left.rightmesh.id.MeshId;
-import io.left.rightmesh.mesh.MeshStateListener;
-import io.left.rightmesh.util.RightMeshException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RightMeshConnectorTest {
@@ -41,8 +42,11 @@ public class RightMeshConnectorTest {
 
     private RightMeshConnector SUT;
 
+    /**
+     * Run before each test method.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         SUT = new RightMeshConnector(MESH_PORT);
         SUT.setAndroidMeshManager(androidMeshManager);

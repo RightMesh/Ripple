@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Binding data from viewmodel to UI
+     * Binding data from viewmodel to UI.
      */
     private void observeViewModel() {
         viewModel.colour.observe(this, colour ->
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Init viewmodel
+     * Init viewmodel.
      *
      * @param savedInstanceState avedInstanceState – If the activity is being re-initialized after
      *                           previously being shut down then this Bundle contains the data it
