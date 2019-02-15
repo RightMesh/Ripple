@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MainViewModelTest {
-    // Executes each task synchronously using Architecture Components.
+    //Executes each task synchronously using Architecture Components.
     //Using for testing Android ViewModel
     @Rule
     public InstantTaskExecutorRule rule = new InstantTaskExecutorRule();
@@ -34,7 +34,7 @@ public class MainViewModelTest {
     @Mock
     private MeshId mockMeshId;
 
-    private MainViewModel SUT;
+    private MainViewModel spyViewModel;
 
     /**
      * Run before each test method.
@@ -42,14 +42,13 @@ public class MainViewModelTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        SUT = new MainViewModel(application);
-        SUT.setRightMeshConnector(rightMeshConnector);
+        MainViewModel underTest = new MainViewModel(application);
+        underTest.setRightMeshConnector(rightMeshConnector);
+        spyViewModel = Mockito.spy(underTest);
     }
 
     @Test
     public void init_isCalled() {
-        MainViewModel spyViewModel = Mockito.spy(SUT);
-
         //Trigger
         spyViewModel.init();
 
@@ -62,8 +61,6 @@ public class MainViewModelTest {
 
     @Test
     public void toRightMeshWalletActivty_isCalled() throws RightMeshException {
-        MainViewModel spyViewModel = Mockito.spy(SUT);
-
         //Trigger
         spyViewModel.toRightMeshWalletActivty();
 
@@ -74,7 +71,6 @@ public class MainViewModelTest {
 
     @Test
     public void sendColorMsg_nullTargetMeshId() throws RightMeshException {
-        MainViewModel spyViewModel = Mockito.spy(SUT);
         MeshId targetId = null;
         Colour msgColor = Colour.RED;
         String payload = String.valueOf(targetId) + ":" + msgColor;
@@ -89,7 +85,6 @@ public class MainViewModelTest {
 
     @Test
     public void sendColorMsg_targetMeshId() throws RightMeshException {
-        MainViewModel spyViewModel = Mockito.spy(SUT);
         MeshId targetId = mockMeshId;
         Colour msgColor = Colour.RED;
         String payload = String.valueOf(targetId) + ":" + msgColor;
@@ -104,8 +99,6 @@ public class MainViewModelTest {
 
     @Test
     public void onCleared_isCalled() throws RightMeshException {
-        MainViewModel spyViewModel = Mockito.spy(SUT);
-
         //Trigger
         spyViewModel.onCleared();
 

@@ -3,6 +3,7 @@ package io.left.ripple;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendAllRecipients(View view) {
         MeshIdAdapter recipientAdapter = recipientView.getAdapter();
-        Colour crrColour = viewModel.colour.getValue();
+        Colour crrColour = viewModel.liveDataColor.getValue();
 
         for (int i = 0; i < recipientAdapter.getCount(); i++) {
             MeshId peer = recipientAdapter.getItem(i);
@@ -103,12 +104,15 @@ public class MainActivity extends AppCompatActivity {
      * Binding data from viewmodel to UI.
      */
     private void observeViewModel() {
-        viewModel.colour.observe(this, colour ->
-                layoutBackground.setBackgroundColor(
+        viewModel.liveDataColor.observe(this,
+                colour -> layoutBackground.setBackgroundColor(
                         ContextCompat.getColor(this, colour.getColourId())));
-        viewModel.peerChangedEvent.observe(this, peerChangeEvent ->
-                recipientView.updatePeersList(peerChangeEvent));
-        viewModel.myMeshId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
+        viewModel.liveDataPeerChangedEvent.observe(this,
+                peerChangeEvent -> recipientView.updatePeersList(peerChangeEvent));
+        viewModel.liveDataMyMeshId.observe(this,
+                newMeshId -> recipientView.addNewDevice(newMeshId));
+        viewModel.liveDataNotification.observe(this,
+                msg -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
     }
 
     /**

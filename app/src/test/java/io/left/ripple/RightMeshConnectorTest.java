@@ -40,7 +40,7 @@ public class RightMeshConnectorTest {
     @Mock
     private MeshId meshId;
 
-    private RightMeshConnector SUT;
+    private RightMeshConnector spyRightMeshConnector;
 
     /**
      * Run before each test method.
@@ -48,17 +48,17 @@ public class RightMeshConnectorTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        SUT = new RightMeshConnector(MESH_PORT);
-        SUT.setAndroidMeshManager(androidMeshManager);
-        SUT.setOnConnectSuccessListener(onConnectSuccessListener);
-        SUT.setOnDataReceiveListener(onDataReceiveListener);
-        SUT.setOnPeerChangedListener(onPeerChangedListener);
+        RightMeshConnector underTest = new RightMeshConnector(MESH_PORT);
+        underTest.setAndroidMeshManager(androidMeshManager);
+        underTest.setOnConnectSuccessListener(onConnectSuccessListener);
+        underTest.setOnDataReceiveListener(onDataReceiveListener);
+        underTest.setOnPeerChangedListener(onPeerChangedListener);
+
+        spyRightMeshConnector = Mockito.spy(underTest);
     }
 
     @Test
     public void meshStateChanged_successEvent() throws RightMeshException, ClassNotFoundException {
-        RightMeshConnector spyRightMeshConnector = Mockito.spy(SUT);
-
         //Trigger
         spyRightMeshConnector.meshStateChanged(meshId, MeshStateListener.SUCCESS);
 
@@ -69,8 +69,6 @@ public class RightMeshConnectorTest {
 
     @Test
     public void stop_isCalled() throws RightMeshException.RightMeshServiceDisconnectedException {
-        RightMeshConnector spyRightMeshConnector = Mockito.spy(SUT);
-
         spyRightMeshConnector.stop();
 
         verify(androidMeshManager).stop();
@@ -79,8 +77,6 @@ public class RightMeshConnectorTest {
 
     @Test
     public void toRightMeshWalletActivty_isCalled() throws RightMeshException {
-        RightMeshConnector spyRightMeshConnector = Mockito.spy(SUT);
-
         spyRightMeshConnector.toRightMeshWalletActivty();
 
         verify(androidMeshManager).showSettingsActivity();
@@ -89,7 +85,6 @@ public class RightMeshConnectorTest {
 
     @Test
     public void sentDataReliable_isCalled() throws RightMeshException {
-        RightMeshConnector spyRightMeshConnector = Mockito.spy(SUT);
         String payload = "abc";
 
         spyRightMeshConnector.sentDataReliable(meshId, payload);

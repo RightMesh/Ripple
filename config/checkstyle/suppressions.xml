@@ -8,8 +8,4 @@
     <suppress id="AndroidNaming1of3" files=".*"/>
     <suppress id="AndroidNaming2of3" files=".*"/>
     <suppress id="AndroidNaming3of3" files=".*"/>
-
-    <!-- Checks requiring code refactoring or documentation. Will require separate tickets. -->
-    <suppress checks=".*NameCheck" files=".*"/>
-    <suppress checks="IllegalCatchCheck" files="AndroidWifiDeviceInterface.java"/>
 </suppressions>

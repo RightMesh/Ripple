@@ -8,9 +8,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+
 import io.left.rightmesh.id.MeshId;
 import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.util.RightMeshException;
+import io.left.rightmesh.util.RightMeshRuntimeException;
 
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
@@ -27,10 +29,11 @@ public class MainViewModel extends AndroidViewModel {
     private RightMeshConnector rmConnector;
 
     // Current background colour
-    MutableLiveData<Colour> colour = new MutableLiveData<>();
-    MutableLiveData<MeshManager.RightMeshEvent> peerChangedEvent = new MutableLiveData<>();
+    MutableLiveData<Colour> liveDataColor = new MutableLiveData<>();
+    MutableLiveData<String> liveDataNotification = new MutableLiveData<>();
+    MutableLiveData<MeshManager.RightMeshEvent> liveDataPeerChangedEvent = new MutableLiveData<>();
     // Stores the MeshId of this device so that it doesn't need to be retrieved with a service call.
-    MutableLiveData<MeshId> myMeshId = new MutableLiveData<>();
+    MutableLiveData<MeshId> liveDataMyMeshId = new MutableLiveData<>();
 
     private MeshId currentTargetMeshId = null;
 
@@ -42,7 +45,7 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
 
-        colour.setValue(RED);
+        liveDataColor.setValue(RED);
         rmConnector = new RightMeshConnector(MESH_PORT);
     }
 
@@ -54,8 +57,8 @@ public class MainViewModel extends AndroidViewModel {
         rmConnector.connect(getApplication());
 
         rmConnector.setOnDataReceiveListener(event -> receiveColourMessage(event));
-        rmConnector.setOnPeerChangedListener(event -> peerChangedEvent.postValue(event));
-        rmConnector.setOnConnectSuccessListener(meshId -> myMeshId.setValue(meshId));
+        rmConnector.setOnPeerChangedListener(event -> liveDataPeerChangedEvent.postValue(event));
+        rmConnector.setOnConnectSuccessListener(meshId -> liveDataMyMeshId.setValue(meshId));
     }
 
     /**
@@ -74,7 +77,7 @@ public class MainViewModel extends AndroidViewModel {
      * @param colour colour to change to
      */
     void setColour(Colour colour) {
-        this.colour.postValue(colour);
+        this.liveDataColor.postValue(colour);
     }
 
     /**
@@ -112,8 +115,13 @@ public class MainViewModel extends AndroidViewModel {
         } catch (RightMeshException.RightMeshServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
                     + sde.getMessage());
+            liveDataNotification.setValue(sde.getMessage());
+        } catch (RightMeshRuntimeException.RightMeshLicenseException le) {
+            Log.e(TAG, le.getMessage());
+            liveDataNotification.setValue(le.getMessage());
         } catch (RightMeshException rme) {
             Log.e(TAG, "Unable to find next hop to peer, with message: " + rme.getMessage());
+            liveDataNotification.setValue(rme.getMessage());
         }
     }
 
@@ -122,7 +130,7 @@ public class MainViewModel extends AndroidViewModel {
      */
     void sendColorMsg() {
         sendColorMsg(currentTargetMeshId,
-                colour.getValue());
+                liveDataColor.getValue());
     }
 
     /**
@@ -145,7 +153,7 @@ public class MainViewModel extends AndroidViewModel {
             e.printStackTrace();
             return;
         }
-        if (!recipient.equals(myMeshId.getValue())) {
+        if (!recipient.equals(liveDataMyMeshId.getValue())) {
             sendColorMsg(recipient, Colour.valueOf(
                     dataString.substring(separatorIndex + 1)));
         }
