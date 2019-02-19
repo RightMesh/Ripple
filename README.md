@@ -14,8 +14,6 @@ To access the RightMesh settings page, just long-press the send button.
 
 Ripple is built in Android Studio, and should be able to be opened once this repo has been cloned. Note that you will have to sign up for a RightMesh developer account in order to download our library and license verification Gradle plugin - please check out [https://rightmesh.io/developers](https://rightmesh.io/developers) for more information.
 
-If you want to change GPSTracker configuration (RightMesh port, SuperPeer information), you might need to revise `Constants.java`
-
 ## What is RightMesh?
 
 RightMesh is an SDK that is trying change the paradigm from “Always Connected to the Internet” and let everyone simply be “Always Connected” - to people, to devices, to our communities, to what matters in our world. RightMesh connects smartphones even when the Internet and mobile data can’t. [Check out our website for more details!](https://www.rightmesh.io)
