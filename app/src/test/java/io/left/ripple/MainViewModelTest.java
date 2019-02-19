@@ -79,7 +79,7 @@ public class MainViewModelTest {
         spyViewModel.sendColorMsg(targetId, msgColor);
 
         //verify
-        verify(rightMeshConnector, never()).sentDataReliable(targetId, payload);
+        verify(rightMeshConnector, never()).sendDataReliable(targetId, payload);
         verify(spyViewModel).sendColorMsg(targetId, msgColor);
     }
 
@@ -93,7 +93,7 @@ public class MainViewModelTest {
         spyViewModel.sendColorMsg(targetId, msgColor);
 
         //verify
-        verify(rightMeshConnector).sentDataReliable(targetId, payload);
+        verify(rightMeshConnector).sendDataReliable(targetId, payload);
         verify(spyViewModel).sendColorMsg(targetId, msgColor);
     }
 

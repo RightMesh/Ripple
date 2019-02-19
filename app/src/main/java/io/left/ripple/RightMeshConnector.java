@@ -13,7 +13,13 @@ import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 
 /**
- * To communicate with Rightmesh service.
+ * To communicate with the RightMesh service and redirect to RightMesh wallet activity.
+ *
+ * After connecting, we can register {@link OnDataReceiveListener}, {@link OnPeerChangedListener},
+ * {@link OnConnectSuccessListener} to receive the RightMesh event.
+ *
+ * Always call {@link RightMeshConnector#stop()} if not interest in keeping connection with
+ * RightMesh service anymore.
  */
 public class RightMeshConnector implements MeshStateListener {
     private static final String TAG = RightMeshConnector.class.getCanonicalName();
@@ -141,7 +147,7 @@ public class RightMeshConnector implements MeshStateListener {
      * @throws RightMeshException.RightMeshServiceDisconnectedException Service disconnected.
      * @throws RightMeshException                                       Can't find next hop.
      */
-    public void sentDataReliable(MeshId targetMeshId, String payload) throws RightMeshException,
+    public void sendDataReliable(MeshId targetMeshId, String payload) throws RightMeshException,
             RightMeshException.RightMeshServiceDisconnectedException {
         androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(targetMeshId),
                 meshPort, payload.getBytes());
@@ -149,6 +155,7 @@ public class RightMeshConnector implements MeshStateListener {
 
     /**
      * {@link AndroidMeshManager} setter used to testing purpose.
+     *
      * @param androidMeshManager - should pass Mock object.
      */
     public void setAndroidMeshManager(AndroidMeshManager androidMeshManager) {

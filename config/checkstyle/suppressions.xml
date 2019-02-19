@@ -5,7 +5,5 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-    <suppress id="AndroidNaming1of3" files=".*"/>
-    <suppress id="AndroidNaming2of3" files=".*"/>
-    <suppress id="AndroidNaming3of3" files=".*"/>
+
 </suppressions>

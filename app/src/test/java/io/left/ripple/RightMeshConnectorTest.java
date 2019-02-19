@@ -84,12 +84,12 @@ public class RightMeshConnectorTest {
     }
 
     @Test
-    public void sentDataReliable_isCalled() throws RightMeshException {
+    public void sendDataReliable_isCalled() throws RightMeshException {
         String payload = "abc";
 
-        spyRightMeshConnector.sentDataReliable(meshId, payload);
+        spyRightMeshConnector.sendDataReliable(meshId, payload);
 
-        verify(spyRightMeshConnector).sentDataReliable(any(), eq(payload));
+        verify(spyRightMeshConnector).sendDataReliable(any(), eq(payload));
     }
 
 }

@@ -110,7 +110,7 @@ public class MainViewModel extends AndroidViewModel {
         try {
             if (targetMeshId != null) {
                 String payload = targetMeshId.toString() + ":" + msgColor.toString();
-                rmConnector.sentDataReliable(targetMeshId, payload);
+                rmConnector.sendDataReliable(targetMeshId, payload);
             }
         } catch (RightMeshException.RightMeshServiceDisconnectedException sde) {
             Log.e(TAG, "Service disconnected while sending data, with message: "
