@@ -1,4 +1,4 @@
-# Ripple
+# Ripple [![Build status](https://travis-ci.com/RightMesh/Ripple.svg?branch=master)](https://travis-ci.com/RightMesh/Ripple)
 
 ## What is this?
 
