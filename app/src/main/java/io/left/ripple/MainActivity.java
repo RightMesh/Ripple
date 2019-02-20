@@ -3,6 +3,7 @@ package io.left.ripple;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -56,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Display the RightMesh settings activity when the send button is tapped and held.
         fabSend.setOnLongClickListener(v -> {
-            viewModel.showSettingsActivity();
+            viewModel.toRightMeshWalletActivty();
             return true;
         });
+
         fabSend.setOnClickListener(this::sendSingleMsg);
         fabSendAll.setOnClickListener(this::sendAllRecipients);
 
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendAllRecipients(View view) {
         MeshIdAdapter recipientAdapter = recipientView.getAdapter();
-        Colour crrColour = viewModel.colour.getValue();
+        Colour crrColour = viewModel.liveDataColor.getValue();
 
         for (int i = 0; i < recipientAdapter.getCount(); i++) {
             MeshId peer = recipientAdapter.getItem(i);
@@ -98,15 +100,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Binding data from viewmodel to UI.
+     */
     private void observeViewModel() {
-        viewModel.colour.observe(this, colour ->
-                layoutBackground.setBackgroundColor(
+        viewModel.liveDataColor.observe(this,
+                colour -> layoutBackground.setBackgroundColor(
                         ContextCompat.getColor(this, colour.getColourId())));
-        viewModel.peerChangedEvent.observe(this, peerChangeEvent ->
-                recipientView.updatePeersList(peerChangeEvent));
-        viewModel.deviceId.observe(this, newMeshId -> recipientView.addNewDevice(newMeshId));
+        viewModel.liveDataPeerChangedEvent.observe(this,
+                peerChangeEvent -> recipientView.updatePeersList(peerChangeEvent));
+        viewModel.liveDataMyMeshId.observe(this,
+                newMeshId -> recipientView.addNewDevice(newMeshId));
+        viewModel.liveDataNotification.observe(this,
+                msg -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Init viewmodel.
+     *
+     * @param savedInstanceState avedInstanceState – If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it
+     *                           most recently supplied in
+     */
     private void initViewModel(Bundle savedInstanceState) {
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         if (savedInstanceState == null) {

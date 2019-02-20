@@ -1,0 +1,50 @@
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = '8.17'
+    ignoreFailures = false
+    maxErrors=0
+    maxWarnings=0
+}
+
+//Get Rightmesh Checkstyle from github.
+task configureCheckstyle {
+    def configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+
+    group "Checkstyle"
+    description "Applies the RightMesh checkstyle rules to the project"
+    outputs.file configFile
+
+    doLast {
+        if (!configFile.exists()) {
+            configFile.getParentFile().mkdirs()
+        }
+        try {
+            URL src = new URL('https://raw.githubusercontent.com/RightMesh/Checkstyle-Config/'
+                    + '576d44a7974e2c584cfe4a7297aed658f1387084'
+                    + '/config/checkstyle.xml')
+            HttpURLConnection connection = (HttpURLConnection) src.openConnection()
+            connection.setConnectTimeout(1000)
+            configFile.withOutputStream { it << connection.getInputStream() }
+            println "Configured checkstyle successfully."
+        } catch (SocketTimeoutException ignored) {
+            /* Took too long, probably offline. Maybe next time. */
+            println "Could not configure checkstyle due to network error."
+        }
+    }
+}
+
+task checkstyle(type: Checkstyle) {
+    description 'Check code standard'
+    group 'verification'
+
+    configFile file('../config/checkstyle/checkstyle.xml')
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+
+    dependsOn(configureCheckstyle) //Init Rightmesh checkstyle before inspecting code
+}
+
