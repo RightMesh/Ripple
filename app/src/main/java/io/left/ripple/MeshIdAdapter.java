@@ -19,6 +19,8 @@ import io.left.ripple.helper.MeshHelper;
  * A custom adapter to style the MeshIDs a little nicer in the list.
  */
 public class MeshIdAdapter extends ArrayAdapter<MeshId> {
+    // ID of the peer to treat as this device (i.e. for styling and naming).
+    private MeshId deviceId;
 
     /**
      * Inflates the parent {@link ArrayAdapter} and stores the context for use loading colours.
@@ -29,8 +31,6 @@ public class MeshIdAdapter extends ArrayAdapter<MeshId> {
         super(context, android.R.layout.simple_spinner_dropdown_item);
     }
 
-    // ID of the peer to treat as this device (i.e. for styling and naming).
-    private MeshId deviceId;
 
     public void setDeviceId(MeshId deviceId) {
         this.deviceId = deviceId;
@@ -93,16 +93,6 @@ public class MeshIdAdapter extends ArrayAdapter<MeshId> {
             view.setTextColor(ContextCompat.getColor(getContext(), colour));
         }
         return view;
-    }
-
-
-    //
-    // HELPER METHODS
-    //
-
-    @Override
-    public int getCount() {
-        return super.getCount();
     }
 
     /**

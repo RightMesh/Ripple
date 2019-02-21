@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.left.rightmesh.id.MeshId;
 import io.left.ripple.views.CustomViewRightMeshRecipient;
 
@@ -23,17 +24,17 @@ import io.left.ripple.views.CustomViewRightMeshRecipient;
  * background colour of the peers that transmit the message along the way.
  */
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getCanonicalName();
-
     MainViewModel viewModel;
 
     // Responsible for allowing the user to select the ping recipient.
+    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     CustomViewRightMeshRecipient recipientView;
     FloatingActionButton fabSend;
     FloatingActionButton fabSendAll;
     Button buttonRed;
     Button buttonGreen;
     Button buttonBlue;
+    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     View layoutBackground;
 
     /**
@@ -75,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void colorButtonClick(View view) {
         Colour colour;
-        if (view == buttonGreen) {
+        if (view.equals(buttonGreen)) {
             colour = Colour.GREEN;
-        } else if (view == buttonRed) {
+        } else if (view.equals(buttonRed)) {
             colour = Colour.RED;
         } else {
             colour = Colour.BLUE;
@@ -86,10 +87,12 @@ public class MainActivity extends AppCompatActivity {
         viewModel.setColour(colour);
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void sendSingleMsg(View view) {
         viewModel.sendColorMsg();
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private void sendAllRecipients(View view) {
         MeshIdAdapter recipientAdapter = recipientView.getAdapter();
         Colour crrColour = viewModel.liveDataColor.getValue();
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Init viewmodel.
      *
-     * @param savedInstanceState avedInstanceState – If the activity is being re-initialized after
+     * @param savedInstanceState SavedInstanceState – If the activity is being re-initialized after
      *                           previously being shut down then this Bundle contains the data it
      *                           most recently supplied in
      */
