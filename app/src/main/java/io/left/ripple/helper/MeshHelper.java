@@ -2,7 +2,7 @@ package io.left.ripple.helper;
 
 import io.left.rightmesh.id.MeshId;
 
-public class MeshHelper {
+public final class MeshHelper {
 
     private static MeshHelper instance = null;
 
@@ -10,18 +10,18 @@ public class MeshHelper {
     }
 
     /**
-     * Get single object.
-     * @return MeshHelper
+     * Get Singleton instance.
+     *
+     * Avoid using double check locking pattern
+     * http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+     *
+     * @return Meshhelper
      */
     public static MeshHelper getInstance() {
-        if (instance == null) {
-            //synchronized block to remove overhead
-            synchronized (MeshHelper.class) {
-                if (instance == null) {
-                    // if instance is null, initialize
-                    instance = new MeshHelper();
-                }
-
+        synchronized (MeshHelper.class) {
+            if (instance == null) {
+                // if instance is null, initialize
+                instance = new MeshHelper();
             }
         }
 

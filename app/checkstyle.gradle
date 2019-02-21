@@ -41,10 +41,14 @@ task checkstyle(type: Checkstyle) {
     configFile file('../config/checkstyle/checkstyle.xml')
     source 'src'
     include '**/*.java'
-    exclude '**/gen/**'
+    //exclude '**/gen/**'
 
     classpath = files()
-
     dependsOn(configureCheckstyle) //Init Rightmesh checkstyle before inspecting code
 }
+
+check {
+    dependsOn(project.tasks.checkstyle)
+}
+
 

@@ -1,0 +1,20 @@
+apply plugin: 'pmd'
+
+task pmd(type: Pmd) {
+    description 'Check dead code, duplicated code, cyclomatic complexity and overcomplicated expressions'
+    group 'verification'
+
+    ruleSetFiles = files('../config/pmd/pmd.xml')
+    source = fileTree('src/main/java')
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.destination = "$project.buildDir/outputs/reports/pmd.html"
+    }
+    doLast{
+        println "Finished the PMD inspection."
+    }
+}

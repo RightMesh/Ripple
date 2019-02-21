@@ -1,0 +1,25 @@
+apply plugin: 'findbugs'
+
+task findbugs(type: FindBugs) {
+    description 'Check potential bugs'
+    group 'test'
+    dependsOn assemble
+
+    classes = files("$project.buildDir/intermediates/javac")
+    source fileTree('src/main/java/')
+    excludeFilter file('../config/findbugs/suppressions.xml')
+    classpath = files()
+    effort 'max'
+    ignoreFailures = false
+    reportLevel = "low"
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.buildDir/outputs/reports/findbugs.html"
+    }
+
+    doLast{
+        println "Finished Findbugs inspection."
+    }
+}
