@@ -46,7 +46,9 @@ android:
 jobs:
   include:
   - stage: Validation
-    script: ./gradlew checkstyle pmd  $PROPERTIES
+      script: ./gradlew checkstyle pmd  $PROPERTIES
+  - stage: Assemble
+      script: ./gradlew assemble -xlint -xtest -PdisablePreDex $PROPERTIES
   - stage: Test
     name: Unit Tests
-    script: ./gradlew findbugs test $PROPERTIES
+      script: ./gradlew findbugs test $PROPERTIES
