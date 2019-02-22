@@ -50,5 +50,5 @@ jobs:
   - stage: Assemble
       script: ./gradlew assemble -xlint -xtest -PdisablePreDex $PROPERTIES
   - stage: Test
-    name: Unit Tests
+      name: Unit Tests
       script: ./gradlew findbugs test $PROPERTIES
