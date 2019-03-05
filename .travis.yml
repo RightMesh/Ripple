@@ -48,7 +48,7 @@ jobs:
   - stage: Verify
     script: ./gradlew checkstyle pmd $PROPERTIES
   - stage: Run Findbugs
-    script: ./gradlew clean findbugs -xlint -xtest
+    script: ./gradlew clean findbugs -xlint -xtest $PROPERTIES
   - stage: Test
     name: Unit Tests
     script: ./gradlew test -xlint $PROPERTIES
