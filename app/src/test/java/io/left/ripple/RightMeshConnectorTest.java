@@ -22,11 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RightMeshConnectorTest {
-
-    // Executes each task synchronously using Architecture Components.
-    @Rule
-    public InstantTaskExecutorRule rule = new InstantTaskExecutorRule();
-
     private static final int MESH_PORT = 5001;
 
     @Mock

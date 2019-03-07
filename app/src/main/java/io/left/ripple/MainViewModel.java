@@ -14,6 +14,8 @@ import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.util.RightMeshException;
 import io.left.rightmesh.util.RightMeshRuntimeException;
 
+import java.nio.charset.Charset;
+
 /**
  * De-coupling business logic from Mainactivity to MainViewModel.
  * Reason to extend AndroidViewModel
@@ -141,7 +143,7 @@ public class MainViewModel extends AndroidViewModel {
     private void receiveColourMessage(MeshManager.RightMeshEvent rme) {
         // Retrieve data from event.
         MeshManager.DataReceivedEvent dre = (MeshManager.DataReceivedEvent) rme;
-        String dataString = new String(dre.data);
+        String dataString = new String(dre.data, Charset.forName("UTF-8"));
         int separatorIndex = dataString.indexOf(':');
 
         // Transmit the message forward if this device is not the intended final recipient.
@@ -150,7 +152,6 @@ public class MainViewModel extends AndroidViewModel {
             recipient = MeshId.fromString(dataString.substring(0, separatorIndex));
         } catch (RightMeshException e) {
             Log.e(TAG, "error creating meshId " + e.getMessage());
-            e.printStackTrace();
             return;
         }
         if (!recipient.equals(liveDataMyMeshId.getValue())) {

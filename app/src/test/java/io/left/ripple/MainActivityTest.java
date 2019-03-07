@@ -27,7 +27,6 @@ import org.robolectric.annotation.Config;
         sdk = 23)
 public class MainActivityTest extends AndroidTest<MainActivity> {
 
-    CustomViewRightMeshRecipient recipientView;
     private Button buttonRed;
     private Button buttonGreen;
     private Button buttonBlue;
@@ -50,7 +49,6 @@ public class MainActivityTest extends AndroidTest<MainActivity> {
         buttonRed = findViewById(R.id.button_red);
         buttonBlue = findViewById(R.id.button_blue);
         buttonGreen = findViewById(R.id.button_green);
-        recipientView = findViewById(R.id.rightmesh_recipient);
     }
 
     /**

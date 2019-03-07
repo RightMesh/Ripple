@@ -12,6 +12,8 @@ import io.left.rightmesh.mesh.MeshManager;
 import io.left.rightmesh.mesh.MeshStateListener;
 import io.left.rightmesh.util.RightMeshException;
 
+import java.nio.charset.Charset;
+
 /**
  * To communicate with the RightMesh service and redirect to RightMesh wallet activity.
  *
@@ -24,7 +26,7 @@ import io.left.rightmesh.util.RightMeshException;
 public class RightMeshConnector implements MeshStateListener {
     private static final String TAG = RightMeshConnector.class.getCanonicalName();
 
-    private int meshPort;
+    private final int meshPort;
 
     // Interface object for the RightMesh library.
     private AndroidMeshManager androidMeshManager;
@@ -150,7 +152,7 @@ public class RightMeshConnector implements MeshStateListener {
     public void sendDataReliable(MeshId targetMeshId, String payload) throws RightMeshException,
             RightMeshException.RightMeshServiceDisconnectedException {
         androidMeshManager.sendDataReliable(androidMeshManager.getNextHopPeer(targetMeshId),
-                meshPort, payload.getBytes());
+                meshPort, payload.getBytes(Charset.forName("UTF-8")));
     }
 
     /**

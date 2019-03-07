@@ -45,10 +45,10 @@ android:
   - adb shell input keyevent 82 #Unlock phone before using
 jobs:
   include:
-  - stage: Build
-    script: ./gradlew clean build -xlint -xtest -PdisablePreDex $PROPERTIES
-  - stage: checkstyle
-    script: ./gradlew checkstyle -xlint -xtest  $PROPERTIES
+  - stage: Verify
+    script: ./gradlew checkstyle pmd $PROPERTIES
+  - stage: Run Findbugs
+    script: ./gradlew clean findbugs -xlint -xtest $PROPERTIES
   - stage: Test
     name: Unit Tests
-    script: ./gradlew test $PROPERTIES
+    script: ./gradlew test -xlint $PROPERTIES
